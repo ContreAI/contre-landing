@@ -31,16 +31,16 @@ function Footer() {
     {
       title: "Company",
       links: [
-        { label: "About Us", href: "#about" },
-        { label: "Contact", href: "#contact" },
+        { label: "About Us", href: "/about", isRoute: true },
+        { label: "Contact", href: "/contact", isRoute: true },
       ],
     },
     {
       title: "Legal",
       links: [
-        { label: "Privacy Policy", href: "#privacy" },
-        { label: "Terms of Service", href: "#terms" },
-        { label: "Cookie Policy", href: "#cookies" },
+        { label: "Privacy Policy", href: "/privacy", isRoute: true },
+        { label: "Terms of Service", href: "/terms", isRoute: true },
+        { label: "Cookie Policy", href: "/cookies", isRoute: true },
       ],
     },
   ];
