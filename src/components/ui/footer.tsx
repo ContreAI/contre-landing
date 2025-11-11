@@ -5,7 +5,7 @@ import {
   Facebook,
   Instagram,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import {FooterBackgroundGradient} from "@/components/ui/hover-footer";
 import { TextHoverEffect } from "@/components/ui/hover-footer";
 
@@ -112,7 +112,7 @@ function Footer() {
                   <li key={link.label}>
                     {link.isRoute ? (
                       <Link
-                        to={link.href}
+                        href={link.href}
                         className="hover:text-[#3ca2fa] transition-colors"
                       >
                         {link.label}
