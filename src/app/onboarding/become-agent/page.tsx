@@ -1,6 +1,10 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
+import {
+  MembershipWithTenant,
+  completeAgentOnboarding,
+} from './actions'
 
 export default async function BecomeAgentPage() {
   const supabase = await createClient()
@@ -11,15 +15,6 @@ export default async function BecomeAgentPage() {
   if (!user) {
     redirect('/authentication/login')
   }
-
-  type MembershipWithTenant =
-    | {
-        tenants:
-          | null
-          | { tenant_type: string | null }
-          | Array<{ tenant_type: string | null } | null>
-      }
-    | null
 
   const admin = getAdminClient();
   
@@ -54,7 +49,7 @@ export default async function BecomeAgentPage() {
         </p>
       </section>
 
-      <form className="space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
+      <form action={completeAgentOnboarding} className="space-y-6 rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
         <div className="space-y-2">
           <label htmlFor="purpose" className="block text-sm font-medium text-gray-900">
             What’s your primary goal for using Contre?
