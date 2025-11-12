@@ -3,7 +3,6 @@ import EnhancedBackgroundPathsAgents from "@/components/ui/modern-background-pat
 import { FeaturesAgents } from "@/components/ui/features-agents"
 import { CTASectionAgents } from "@/components/ui/cta-section-agents"
 import { CTASectionAltAgents } from "@/components/ui/cta-section-alt-agents"
-import { SimpleHeader } from "@/components/ui/simple-header"
 import { HowItWorksAgents } from "@/components/ui/how-it-works-agents"
 import { FeaturesSectionWithHoverEffectsAgents } from "@/components/ui/feature-section-with-hover-effects-agents"
 import { FeatureTabsAgents } from "@/components/ui/feature-tabs-agents"
@@ -31,7 +30,6 @@ export const metadata: Metadata = {
 export default function AgentsPage() {
   return (
     <>
-      <SimpleHeader />
       <EnhancedBackgroundPathsAgents />
       <FeaturesAgents />
       <CTASectionAgents />

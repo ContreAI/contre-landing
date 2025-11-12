@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: 'Sign In - Contre AI',
   description: 'Sign in to your Contre AI account to access AI-powered contract analysis and transaction protection.',
   robots: {
-    index: false, // Don't index login pages
+    index: false,
     follow: false,
   },
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Bebas_Neue, Manrope } from 'next/font/google'
 import { defaultMetadata } from '@/lib/metadata'
+import { SimpleHeader } from '@/components/ui/simple-header'
 import './globals.css'
 
 const inter = Inter({ 
@@ -40,6 +41,7 @@ export default function RootLayout({
         className={`${inter.variable} ${bebasNeue.variable} ${manrope.variable} ${inter.className} antialiased`}
         suppressHydrationWarning
       >
+        <SimpleHeader />
         {children}
       </body>
     </html>

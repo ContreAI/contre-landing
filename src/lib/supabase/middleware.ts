@@ -36,7 +36,7 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // Protected routes (require authentication)
-  const protectedRoutes = ['/dashboard', '/settings', '/profile', '/transactions', '/admin']
+  const protectedRoutes = ['/onboarding', '/dashboard', '/settings', '/profile', '/transactions', '/admin']
   const isProtectedRoute = protectedRoutes.some(route => 
     request.nextUrl.pathname.startsWith(route)
   )
@@ -44,15 +44,15 @@ export async function updateSession(request: NextRequest) {
   // Redirect to login if accessing protected route without auth
   if (!user && isProtectedRoute) {
     const url = request.nextUrl.clone()
-    url.pathname = '/login'
+    url.pathname = '/authentication/login'
     url.searchParams.set('redirectTo', request.nextUrl.pathname)
     return NextResponse.redirect(url)
   }
 
   // Redirect authenticated users away from login page
-  if (user && request.nextUrl.pathname === '/login') {
+  if (user && request.nextUrl.pathname === '/authentication/login') {
     const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+    url.pathname = '/onboarding'
     return NextResponse.redirect(url)
   }
 

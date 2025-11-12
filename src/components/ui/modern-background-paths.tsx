@@ -2,23 +2,38 @@
 
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 // Geometric Grid Paths
 function GeometricPaths() {
-  const gridSize = 40
-  const paths = []
+  const [mounted, setMounted] = useState(false)
+  
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
-  for (let x = 0; x < 20; x++) {
-    for (let y = 0; y < 12; y++) {
-      if (Math.random() > 0.7) {
-        paths.push({
-          id: `grid-${x}-${y}`,
-          d: `M${x * gridSize},${y * gridSize} L${(x + 1) * gridSize},${y * gridSize} L${(x + 1) * gridSize},${(y + 1) * gridSize} L${x * gridSize},${(y + 1) * gridSize} Z`,
-          delay: Math.random() * 5,
-        })
+  const paths = useMemo(() => {
+    if (!mounted) return []
+    
+    const gridSize = 40
+    const result = []
+
+    for (let x = 0; x < 20; x++) {
+      for (let y = 0; y < 12; y++) {
+        if (Math.random() > 0.7) {
+          result.push({
+            id: `grid-${x}-${y}`,
+            d: `M${x * gridSize},${y * gridSize} L${(x + 1) * gridSize},${y * gridSize} L${(x + 1) * gridSize},${(y + 1) * gridSize} L${x * gridSize},${(y + 1) * gridSize} Z`,
+            delay: Math.random() * 5,
+          })
+        }
       }
     }
+    return result
+  }, [mounted])
+
+  if (!mounted) {
+    return null
   }
 
   return (

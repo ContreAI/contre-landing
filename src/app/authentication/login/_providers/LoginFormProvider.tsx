@@ -3,14 +3,13 @@
 import { Formik, FormikHelpers } from 'formik'
 import { loginFormSchema, LoginFormValues } from '../_schema/loginFormSchema'
 import { createClient } from '@/lib/supabase/client'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 interface LoginFormProviderProps {
   children: (props: {
     isLoading: boolean
     error: string | null
-    signInWithGoogle: () => Promise<void>
   }) => React.ReactNode
 }
 
@@ -23,7 +22,16 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createClient()
+
+  // Check for auth errors in URL
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    if (errorParam === 'auth_failed') {
+      setError('Authentication failed. Please try again.')
+    }
+  }, [searchParams])
 
   const handleSubmit = async (
     values: LoginFormValues,
@@ -41,8 +49,9 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
       if (error) throw error
 
       if (data.user) {
-        // Redirect to dashboard
-        router.push('/dashboard')
+        // Get redirect destination from query param or default to dashboard
+        const redirectTo = searchParams.get('redirectTo') || '/dashboard'
+        router.push(redirectTo)
         router.refresh()
       }
     } catch (err) {
@@ -53,32 +62,13 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
     }
   }
 
-  const signInWithGoogle = async () => {
-    setIsLoading(true)
-    setError(null)
-
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      })
-
-      if (error) throw error
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Google sign-in failed')
-      setIsLoading(false)
-    }
-  }
-
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={loginFormSchema}
       onSubmit={handleSubmit}
     >
-      {children({ isLoading, error, signInWithGoogle })}
+      {children({ isLoading, error })}
     </Formik>
   )
 }

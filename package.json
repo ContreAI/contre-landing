@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 5138",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 5138",
     "lint": "next lint"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.39.8",
     "@tabler/icons-react": "^3.35.0",
+    "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "formik": "^2.4.6",
