@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
-import { completeAgentOnboarding } from '../actions'
 
 export default async function BecomeAgentPage() {
   const supabase = await createClient()
@@ -13,20 +12,34 @@ export default async function BecomeAgentPage() {
     redirect('/authentication/login')
   }
 
-  const admin = getAdminClient()
+  type MembershipWithTenant =
+    | {
+        tenants:
+          | null
+          | { tenant_type: string | null }
+          | Array<{ tenant_type: string | null } | null>
+      }
+    | null
 
+  const admin = getAdminClient();
+  
   const { data: memberships } = await admin
     .schema('app')
     .from('memberships')
     .select('tenants(tenant_type)')
     .eq('user_id', user!.id)
     .eq('status', 'active')
+    .returns<MembershipWithTenant[]>()
 
-  const hasPersonalTenant = (memberships ?? []).some((membership) =>
-    Array.isArray(membership.tenants)
-      ? membership.tenants.some((tenant) => tenant?.tenant_type === 'b2c')
-      : membership.tenants?.tenant_type === 'b2c'
-  )
+  const hasPersonalTenant = (memberships ?? []).some((membership) => {
+    if (!membership) return false
+    const tenants = membership.tenants
+    if (!tenants) return false
+    if (Array.isArray(tenants)) {
+      return tenants.some((tenant) => tenant?.tenant_type === 'b2c')
+    }
+    return tenants.tenant_type === 'b2c'
+  })
 
   if (hasPersonalTenant) {
     redirect('/dashboard')

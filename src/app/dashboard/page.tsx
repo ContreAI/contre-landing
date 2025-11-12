@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { getAdminClient } from '@/lib/supabase/admin'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -13,9 +14,10 @@ export default async function DashboardPage() {
     redirect('/authentication/login')
   }
 
-  const appDb = supabase // schema already set at client creation
+  const admin = getAdminClient() // schema already set at client creation
 
-  const { data: memberships, error } = await appDb
+  const { data: memberships, error } = await admin
+    .schema('app')
     .from('memberships')
     .select('tenant_id')
     .eq('user_id', user!.id)
@@ -31,7 +33,7 @@ export default async function DashboardPage() {
     redirect('/onboarding')
   }
 
-  const { data: tenantsRows, error: tenantsError } = await appDb
+  const { data: tenantsRows, error: tenantsError } = await admin
     .from('tenants')
     .select('id, name, domain')
     .in('id', activeMemberships)

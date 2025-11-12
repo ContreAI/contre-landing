@@ -18,6 +18,7 @@ export default async function OnboardingPage() {
 
   const { data: memberships } = await admin
     .schema('app')
+    .schema('app')
     .from('memberships')
     .select('tenant_id, tenants(tenant_type, name)')
     .eq('user_id', user!.id)
