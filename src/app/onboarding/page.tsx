@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { getAdminClient } from '@/lib/supabase/admin'
 
 export default async function OnboardingPage() {
   const supabase = await createClient()
@@ -13,7 +14,10 @@ export default async function OnboardingPage() {
     redirect('/authentication/login')
   }
 
-  const { data: memberships } = await supabase
+  const admin = getAdminClient();
+
+  const { data: memberships } = await admin
+    .schema('app')
     .from('memberships')
     .select('tenant_id, tenants(tenant_type, name)')
     .eq('user_id', user!.id)
@@ -46,12 +50,12 @@ export default async function OnboardingPage() {
               Join the Contre platform as an individual agent and access tooling
               tailored for personal productivity.
             </p>
-            <button
-              type="button"
+            <Link
+              href="/onboarding/become-agent"
               className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
             >
-              I&apos;m an Agent
-            </button>
+              Become an Agent
+            </Link>
           </div>
         )}
 
@@ -61,12 +65,12 @@ export default async function OnboardingPage() {
             Set up a company workspace, invite team members, and manage
             transactions from a single hub.
           </p>
-          <button
-            type="button"
+          <Link
+            href="/authentication/signup"
             className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            I&apos;m setting up a company
-          </button>
+            Get Started
+          </Link>
         </div>
       </section>
 

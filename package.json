@@ -6,7 +6,7 @@
     "dev": "next dev -p 5138",
     "build": "next build",
     "start": "next start -p 5138",
-    "lint": "next lint"
+    "lint": "eslint . --ext .ts,.tsx"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",
@@ -23,7 +23,7 @@
     "formik": "^2.4.6",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.553.0",
-    "next": "^15.3.3",
+    "next": "^16.0.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwind-merge": "^3.4.0",
@@ -35,7 +35,7 @@
     "@types/react": "^19.1.16",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.18.0",
-    "eslint-config-next": "^15.3.3",
+    "eslint-config-next": "^16.0.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18",
     "typescript": "^5.9.3"
