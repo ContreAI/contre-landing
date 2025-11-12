@@ -38,64 +38,92 @@ export default async function OnboardingPage() {
     return tenantArray.some((tenant) => tenant?.tenant_type === 'b2c')
   })
 
-  return (
-    <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 px-6 py-16">
-      <section className="space-y-4">
-        <h1 className="text-3xl font-semibold text-gray-900">Welcome to Contre</h1>
-        <p className="text-gray-600">
-          Choose how you want to get started. You can onboard as an individual agent
-          or create a workspace for your company.
-        </p>
-      </section>
+  const cards: Array<{
+    title: string
+    description: string
+    price: string
+    icon: string
+    href?: string
+    disabled?: boolean
+  }> = [
+    {
+      title: 'Individual Agent',
+      description: 'Perfect for agents who want immediate access to Contre.',
+      price: 'Get started at $49.99/mo with instant access',
+      icon: '👤',
+      href: hasB2C ? undefined : '/onboarding/become-agent',
+      disabled: hasB2C,
+    },
+    {
+      title: 'My Brokerage',
+      description: 'Purpose-built for teams who need oversight across every deal.',
+      price: 'Custom solutions starting at $1,500/mo',
+      icon: '🏢',
+      href: 'mailto:support@contre.ai?subject=Contre%20Brokerage%20Onboarding',
+    },
+  ]
 
-      <section className="grid gap-6 md:grid-cols-2">
-        {!hasB2C && (
-          <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-            <h2 className="text-xl font-medium text-gray-900">Become an Agent</h2>
-            <p className="mt-2 text-sm text-gray-600">
-              Join the Contre platform as an individual agent and access tooling
-              tailored for personal productivity.
-            </p>
-            <Link
-              href="/onboarding/become-agent"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
-            >
-              Become an Agent
-            </Link>
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-slate-100 px-6 py-16">
+      <div className="w-full max-w-4xl rounded-3xl border border-slate-200 bg-white/90 p-10 shadow-xl backdrop-blur">
+        <div className="text-center">
+          <h1 className="text-3xl font-semibold text-slate-900">Who are you signing up for?</h1>
+          <p className="mt-2 text-base text-slate-600">Choose your path to get started</p>
+        </div>
+
+        <div className="mt-10 grid gap-6 md:grid-cols-2">
+          {cards.map((card) => {
+            const isDisabled = Boolean(card.disabled)
+            const cardContent = (
+              <div
+                className={[
+                  'relative flex h-full flex-col rounded-2xl border p-6 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+                  isDisabled
+                    ? 'border-slate-200 bg-slate-50 text-slate-500'
+                    : card.title === 'Individual Agent' && !hasB2C
+                      ? 'border-indigo-200 bg-indigo-50 ring-2 ring-indigo-200'
+                      : 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow'
+                ].join(' ')}
+              >
+                <span className="text-3xl">{card.icon}</span>
+                <h2 className="mt-4 text-xl font-semibold text-slate-900">{card.title}</h2>
+                <p className="mt-2 text-sm text-slate-600">{card.description}</p>
+                <p className="mt-4 text-sm font-medium text-indigo-600">{card.price}</p>
+                <span
+                  className={[
+                    'mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition',
+                    isDisabled
+                      ? 'bg-slate-200 text-slate-500'
+                      : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                  ].join(' ')}
+                >
+                  {isDisabled ? 'Already Activated' : 'Select'}
+                </span>
+              </div>
+            )
+
+            if (!card.href || isDisabled) {
+              return (
+                <div key={card.title} aria-disabled={isDisabled}>
+                  {cardContent}
+                </div>
+              )
+            }
+
+            return (
+              <Link key={card.title} href={card.href} className="block focus:outline-none">
+                {cardContent}
+              </Link>
+            )
+          })}
+        </div>
+
+        {hasB2C && (
+          <div className="mt-8 rounded-xl border border-emerald-200 bg-emerald-50 px-6 py-4 text-sm text-emerald-700">
+            You&apos;re already enrolled as an agent. Reach out to our team if you&apos;d like to
+            bring your brokerage onboard.
           </div>
         )}
-
-        <div className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-medium text-gray-900">Create Workspace</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Set up a company workspace, invite team members, and manage
-            transactions from a single hub.
-          </p>
-          <button
-            type="button"
-            className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            disabled
-          >
-            Create Workspace
-          </button>
-        </div>
-      </section>
-
-      {hasB2C && (
-        <div className="rounded-md border border-green-200 bg-green-50 p-4 text-sm text-green-800">
-          You&apos;re already enrolled as an agent. Use the company workspace option
-          if you need to onboard a brokerage.
-        </div>
-      )}
-
-      <div className="text-sm text-gray-500">
-        Need help?{' '}
-        <Link
-          href="mailto:support@contre.ai"
-          className="font-medium text-gray-700 underline hover:text-gray-900"
-        >
-          Contact support
-        </Link>
       </div>
     </main>
   )
