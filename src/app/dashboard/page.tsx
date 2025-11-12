@@ -1,7 +1,7 @@
-import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { selectTenant } from './actions'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -34,6 +34,7 @@ export default async function DashboardPage() {
   }
 
   const { data: tenantsRows, error: tenantsError } = await admin
+    .schema('app')
     .from('tenants')
     .select('id, name, domain')
     .in('id', activeMemberships)
@@ -66,12 +67,15 @@ export default async function DashboardPage() {
             <p className="mt-2 text-sm text-gray-500">
               Manage transactions, documents, and team members inside this workspace.
             </p>
-            <Link
-              href={`/tenants/${tenant.id}`}
-              className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              Enter Workspace
-            </Link>
+            <form action={selectTenant} className="mt-6">
+              <input type="hidden" name="tenant_id" value={tenant.id} />
+              <button
+                type="submit"
+                className="inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              >
+                Enter Workspace
+              </button>
+            </form>
           </article>
         ))}
       </section>

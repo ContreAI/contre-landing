@@ -18,7 +18,6 @@ export default async function OnboardingPage() {
 
   const { data: memberships } = await admin
     .schema('app')
-    .schema('app')
     .from('memberships')
     .select('tenant_id, tenants(tenant_type, name)')
     .eq('user_id', user!.id)
@@ -66,12 +65,13 @@ export default async function OnboardingPage() {
             Set up a company workspace, invite team members, and manage
             transactions from a single hub.
           </p>
-          <Link
-            href="/authentication/signup"
-            className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          <button
+            type="button"
+            className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            disabled
           >
-            Get Started
-          </Link>
+            Create Workspace
+          </button>
         </div>
       </section>
 
