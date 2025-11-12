@@ -26,11 +26,17 @@ export default async function OnboardingPage() {
   const activeMemberships =
     (memberships ?? []) as {
       tenant_id: string
-      tenants: { tenant_type: string | null; name: string | null }[] | null
+      tenants:
+        | { tenant_type: string | null; name: string | null }
+        | { tenant_type: string | null; name: string | null }[]
+        | null
     }[]
-  const hasB2C = activeMemberships.some((membership) =>
-    (membership.tenants ?? []).some((tenant) => tenant.tenant_type === 'b2c')
-  )
+  const hasB2C = activeMemberships.some((membership) => {
+    const tenants = membership.tenants
+    if (!tenants) return false
+    const tenantArray = Array.isArray(tenants) ? tenants : [tenants]
+    return tenantArray.some((tenant) => tenant?.tenant_type === 'b2c')
+  })
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-8 px-6 py-16">
