@@ -49,10 +49,17 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
       if (error) throw error
 
       if (data.user) {
-        // Get redirect destination from query param or default to dashboard
-        const redirectTo = searchParams.get('redirectTo') || '/dashboard'
-        router.push(redirectTo)
-        router.refresh()
+        // Get redirect destination from query param
+        const redirectTo = searchParams.get('redirectTo')
+        
+        if (redirectTo) {
+          // External redirect (cookie already set by Supabase)
+          window.location.href = redirectTo
+        } else {
+          // Internal redirect to dashboard
+          router.push('/dashboard')
+          router.refresh()
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred')

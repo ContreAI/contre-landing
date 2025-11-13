@@ -2,23 +2,34 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 function getCookieDomain(): string | undefined {
-  // In production, use the domain from env var or default to contre.ai
-  // This allows cookies to be shared across:
-  // - contre.ai (root domain)
-  // - platform.contre.ai, dev.contre.ai, and all other subdomains
-  // In development (localhost), don't set domain so cookies work locally
-  if (process.env.NODE_ENV === 'development') {
-    return undefined
+  // IMPORTANT: Only NEXT_PUBLIC_* env vars work in middleware!
+  // Use NEXT_PUBLIC_COOKIE_DOMAIN for custom domains in development
+  if (process.env.NEXT_PUBLIC_COOKIE_DOMAIN) {
+    return process.env.NEXT_PUBLIC_COOKIE_DOMAIN
   }
-  return process.env.COOKIE_DOMAIN || 'contre.ai'
+  
+  // In production, default to .contre.ai
+  if (process.env.NODE_ENV === 'production') {
+    return '.contre.ai'
+  }
+  
+  // In development without COOKIE_DOMAIN set, don't set domain (localhost only)
+  return undefined
 }
 
 export async function updateSession(request: NextRequest) {
+  console.log('[Middleware] ========== CALLED ==========')
+  console.log('[Middleware] Path:', request.nextUrl.pathname)
+  console.log('[Middleware] Method:', request.method)
+  
   let supabaseResponse = NextResponse.next({
     request,
   })
 
   const cookieDomain = getCookieDomain()
+  console.log('[Middleware] Cookie domain:', cookieDomain)
+  console.log('[Middleware] NEXT_PUBLIC_COOKIE_DOMAIN:', process.env.NEXT_PUBLIC_COOKIE_DOMAIN)
+  console.log('[Middleware] NODE_ENV:', process.env.NODE_ENV)
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -36,8 +47,14 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) => {
             const cookieOptions = {
               ...options,
-              ...(cookieDomain && { domain: cookieDomain }),
+              ...(cookieDomain && { 
+                domain: cookieDomain,
+                // In local dev (http), use 'lax'. In production (https), use 'none'
+                sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+                secure: process.env.NODE_ENV === 'production',
+              }),
             }
+            console.log('[Middleware] Setting cookie:', name, 'with options:', cookieOptions)
             supabaseResponse.cookies.set(name, value, cookieOptions)
           })
         },
@@ -67,11 +84,20 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirect authenticated users away from login page
-  if (user && request.nextUrl.pathname === '/authentication/login') {
-    const url = request.nextUrl.clone()
-    url.pathname = '/onboarding'
-    return NextResponse.redirect(url)
+  // Redirect authenticated users away from login/signup pages
+  if (user && (request.nextUrl.pathname === '/authentication/login' || request.nextUrl.pathname === '/authentication/signup')) {
+    // Check if there's a redirectTo param (coming from platform/workspace)
+    const redirectTo = request.nextUrl.searchParams.get('redirectTo')
+    
+    if (redirectTo) {
+      // User is already logged in and came from workspace - send them back
+      return NextResponse.redirect(redirectTo)
+    } else {
+      // User is already logged in and accessing login directly - go to dashboard
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
   }
 
   if (user && request.nextUrl.pathname === '/') {

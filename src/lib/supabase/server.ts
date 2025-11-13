@@ -2,15 +2,19 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 function getCookieDomain(): string | undefined {
-  // In production, use the domain from env var or default to contre.ai
-  // This allows cookies to be shared across:
-  // - contre.ai (root domain)
-  // - platform.contre.ai, dev.contre.ai, and all other subdomains
-  // In development (localhost), don't set domain so cookies work locally
-  if (process.env.NODE_ENV === 'development') {
-    return undefined
+  // Use COOKIE_DOMAIN from env if set (for local testing with custom domains)
+  // Otherwise use default based on NODE_ENV
+  if (process.env.COOKIE_DOMAIN) {
+    return process.env.COOKIE_DOMAIN
   }
-  return process.env.COOKIE_DOMAIN || 'contre.ai'
+  
+  // In production, default to .contre.ai
+  if (process.env.NODE_ENV === 'production') {
+    return '.contre.ai'
+  }
+  
+  // In development without COOKIE_DOMAIN set, don't set domain (localhost only)
+  return undefined
 }
 
 export async function createClient() {
@@ -33,7 +37,12 @@ export async function createClient() {
             cookiesToSet.forEach(({ name, value, options }) => {
               const cookieOptions = {
                 ...options,
-                ...(cookieDomain && { domain: cookieDomain }),
+                ...(cookieDomain && { 
+                  domain: cookieDomain,
+                  // In local dev (http), use 'lax'. In production (https), use 'none'
+                  sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
+                  secure: process.env.NODE_ENV === 'production',
+                }),
               }
               cookieStore.set(name, value, cookieOptions)
             })
