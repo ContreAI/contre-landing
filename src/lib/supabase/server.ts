@@ -2,10 +2,9 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
 function getCookieDomain(): string | undefined {
-  // Use COOKIE_DOMAIN from env if set (for local testing with custom domains)
-  // Otherwise use default based on NODE_ENV
-  if (process.env.COOKIE_DOMAIN) {
-    return process.env.COOKIE_DOMAIN
+  // IMPORTANT: Use NEXT_PUBLIC_COOKIE_DOMAIN so it's accessible everywhere
+  if (process.env.NEXT_PUBLIC_COOKIE_DOMAIN) {
+    return process.env.NEXT_PUBLIC_COOKIE_DOMAIN
   }
   
   // In production, default to .contre.ai
