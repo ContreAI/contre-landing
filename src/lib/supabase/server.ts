@@ -38,9 +38,8 @@ export async function createClient() {
                 ...options,
                 ...(cookieDomain && { 
                   domain: cookieDomain,
-                  // In local dev (http), use 'lax'. In production (https), use 'none'
-                  sameSite: process.env.NODE_ENV === 'production' ? 'none' as const : 'lax' as const,
-                  secure: process.env.NODE_ENV === 'production',
+                  sameSite: 'lax' as const, // Works with both HTTP and HTTPS
+                  // No secure flag - allows cookies over HTTP
                 }),
               }
               cookieStore.set(name, value, cookieOptions)

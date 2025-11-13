@@ -16,6 +16,16 @@ function getCookieDomain(): string | undefined {
 
 export function createClient() {
   const cookieDomain = getCookieDomain()
+  
+  // Server-side: use default client without custom cookie handling
+  if (typeof window === 'undefined') {
+    return createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    )
+  }
+  
+  // Client-side: use custom cookie handling with domain
   console.log('[Browser Client] Cookie domain:', cookieDomain)
   
   return createBrowserClient(
@@ -34,8 +44,8 @@ export function createClient() {
             ...options,
             ...(cookieDomain && {
               domain: cookieDomain,
-              sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax', // Works with both HTTP and HTTPS
+              // No secure flag - allows cookies over HTTP
             }),
           }
           
