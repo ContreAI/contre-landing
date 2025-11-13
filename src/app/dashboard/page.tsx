@@ -14,12 +14,12 @@ export default async function DashboardPage() {
     redirect('/authentication/login')
   }
 
-  const admin = getAdminClient() // schema already set at client creation
+  const admin = getAdminClient()
 
   const { data: memberships, error } = await admin
     .schema('app')
     .from('memberships')
-    .select('tenant_id')
+    .select('tenant_id, role')
     .eq('user_id', user!.id)
     .eq('status', 'active')
 
@@ -27,9 +27,7 @@ export default async function DashboardPage() {
     throw error
   }
 
-  const activeMemberships = (memberships ?? []).map((row) => row.tenant_id)
-
-  if (activeMemberships.length === 0) {
+  if (!memberships || memberships.length === 0) {
     redirect('/onboarding')
   }
 
@@ -37,49 +35,94 @@ export default async function DashboardPage() {
     .schema('app')
     .from('tenants')
     .select('id, name, domain')
-    .in('id', activeMemberships)
+    .in(
+      'id',
+      memberships.map((m) => m.tenant_id)
+    )
 
   if (tenantsError) {
     throw tenantsError
   }
 
-  const cards = (tenantsRows ?? []).map((tenant) => ({
-    id: tenant.id,
-    name: tenant.name ?? 'Workspace',
-  }))
+  const membershipMap = new Map(
+    memberships.map((m) => [m.tenant_id, m.role])
+  )
+
+  const workspaces = (tenantsRows ?? []).map((tenant) => {
+    const name = tenant.name ?? 'Workspace'
+    const initials = name
+      .split(' ')
+      .map((word: string) => word[0]?.toUpperCase() ?? '')
+      .slice(0, 2)
+      .join('')
+    return {
+      id: tenant.id,
+      name,
+      initials,
+      role: membershipMap.get(tenant.id) ?? 'member',
+    }
+  })
+
+  const userDisplayName =
+    user.user_metadata?.first_name && user.user_metadata?.last_name
+      ? `${user.user_metadata.first_name} ${user.user_metadata.last_name}`
+      : user.email?.split('@')[0] ?? 'User'
+  const userInitials = userDisplayName
+    .split(' ')
+    .map((word: string) => word[0]?.toUpperCase() ?? '')
+    .slice(0, 2)
+    .join('') || 'U'
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-5xl flex-col gap-8 px-6 py-14">
-      <header className="space-y-2">
-        <h1 className="text-3xl font-semibold text-gray-900">Your Workspaces</h1>
-        <p className="text-gray-600">
-          Select a tenant to continue. You can manage membership and settings inside each workspace.
-        </p>
-      </header>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="mb-8 text-center">
+          <div className="mb-6 flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-indigo-600 text-lg font-semibold text-white">
+              {userInitials}
+            </div>
+          </div>
+          <h1 className="text-2xl font-semibold text-gray-900">Select a workspace</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            Choose a workspace to continue to Contre
+          </p>
+          <p className="mt-1 text-xs text-gray-500">{user.email}</p>
+        </div>
 
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {cards.map((tenant) => (
-          <article
-            key={tenant.id}
-            className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
-          >
-            <h2 className="text-lg font-medium text-gray-900">{tenant.name ?? 'Workspace'}</h2>
-            <p className="mt-2 text-sm text-gray-500">
-              Manage transactions, documents, and team members inside this workspace.
-            </p>
-            <form action={selectTenant} className="mt-6">
-              <input type="hidden" name="tenant_id" value={tenant.id} />
+        <div className="space-y-2">
+          {workspaces.map((workspace) => (
+            <form key={workspace.id} action={selectTenant}>
+              <input type="hidden" name="tenant_id" value={workspace.id} />
               <button
                 type="submit"
-                className="inline-flex w-full items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="flex w-full items-center gap-4 rounded-lg border border-gray-200 bg-white p-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50 hover:shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                Enter Workspace
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-indigo-600 text-sm font-semibold text-white">
+                  {workspace.initials || 'W'}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-gray-900">{workspace.name}</div>
+                  <div className="text-xs text-gray-500 capitalize">{workspace.role}</div>
+                </div>
+                <svg
+                  className="h-5 w-5 shrink-0 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
               </button>
             </form>
-          </article>
-        ))}
-      </section>
-    </main>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
