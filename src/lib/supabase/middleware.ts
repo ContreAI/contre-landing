@@ -1,10 +1,24 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+function getCookieDomain(): string | undefined {
+  // In production, use the domain from env var or default to contre.ai
+  // This allows cookies to be shared across:
+  // - contre.ai (root domain)
+  // - platform.contre.ai, dev.contre.ai, and all other subdomains
+  // In development (localhost), don't set domain so cookies work locally
+  if (process.env.NODE_ENV === 'development') {
+    return undefined
+  }
+  return process.env.COOKIE_DOMAIN || 'contre.ai'
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })
+
+  const cookieDomain = getCookieDomain()
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -19,9 +33,13 @@ export async function updateSession(request: NextRequest) {
           supabaseResponse = NextResponse.next({
             request,
           })
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          )
+          cookiesToSet.forEach(({ name, value, options }) => {
+            const cookieOptions = {
+              ...options,
+              ...(cookieDomain && { domain: cookieDomain }),
+            }
+            supabaseResponse.cookies.set(name, value, cookieOptions)
+          })
         },
       },
     }
