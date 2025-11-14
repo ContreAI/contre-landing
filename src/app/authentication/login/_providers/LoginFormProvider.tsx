@@ -46,7 +46,9 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
         password: values.password,
       })
 
-      if (error) throw error
+      if (error) {
+        throw error
+      }
 
       if (data.user) {
         // Get redirect destination from query param
