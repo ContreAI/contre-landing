@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
-import { selectTenant } from './actions'
+import { selectTenant, selectTenantById } from './actions'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -60,8 +60,16 @@ export default async function DashboardPage() {
       name,
       initials,
       role: membershipMap.get(tenant.id) ?? 'member',
+      domain: tenant.domain,
     }
   })
+
+  // In non-dev mode, automatically redirect to the first workspace
+  // This executes the same logic as clicking the submit button
+  const isDevMode = process.env.NODE_ENV === 'development'
+  if (!isDevMode && workspaces.length > 0) {
+    await selectTenantById(workspaces[0].id)
+  }
 
   const userDisplayName =
     user.user_metadata?.first_name && user.user_metadata?.last_name

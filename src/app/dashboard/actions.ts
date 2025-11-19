@@ -2,15 +2,11 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getAdminClient } from '@/lib/supabase/admin'
 
-export async function selectTenant(formData: FormData) {
-  'use server'
-
-  const tenantId = formData.get('tenant_id')
-
-  if (typeof tenantId !== 'string' || tenantId.trim().length === 0) {
-    throw new Error('Tenant selection is required')
-  }
-
+/**
+ * Helper function to select and redirect to a tenant
+ * Used both by the form action and automatic redirect in non-dev mode
+ */
+async function selectTenantById(tenantId: string) {
   const supabase = await createClient()
   const {
     data: { user },
@@ -87,4 +83,18 @@ export async function selectTenant(formData: FormData) {
 
   redirect(destinationUrl)
 }
+
+export async function selectTenant(formData: FormData) {
+  'use server'
+
+  const tenantId = formData.get('tenant_id')
+
+  if (typeof tenantId !== 'string' || tenantId.trim().length === 0) {
+    throw new Error('Tenant selection is required')
+  }
+
+  await selectTenantById(tenantId)
+}
+
+export { selectTenantById }
 
