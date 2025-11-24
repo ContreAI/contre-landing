@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, Suspense } from 'react'
+import { useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Mail, AlertCircle, CheckCircle, Loader2 } from 'lucide-react'
 
-function VerifyEmailContent() {
+export function VerifyEmailClient() {
   const [isResending, setIsResending] = useState(false)
   const [resendSuccess, setResendSuccess] = useState(false)
   const [resendError, setResendError] = useState<string | null>(null)
@@ -117,28 +117,5 @@ function VerifyEmailContent() {
         </div>
       </Card>
     </div>
-  )
-}
-
-export function VerifyEmailClient() {
-  return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-8 pb-12 px-4 sm:px-6 lg:px-8">
-          <Card className="max-w-lg w-full space-y-8 p-8">
-            <div className="text-center">
-              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-blue-100">
-                <Loader2 className="h-6 w-6 text-blue-600 animate-spin" />
-              </div>
-              <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-                Loading...
-              </h2>
-            </div>
-          </Card>
-        </div>
-      }
-    >
-      <VerifyEmailContent />
-    </Suspense>
   )
 }
