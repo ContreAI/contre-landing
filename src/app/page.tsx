@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import EnhancedBackgroundPaths from "@/components/ui/modern-background-paths"
+import { StatsBanner } from "@/components/ui/stats-banner"
 import { Features } from "@/components/ui/features-1"
 import { CTASection } from "@/components/ui/cta-section"
 import { CTASectionAlt } from "@/components/ui/cta-section-alt"
@@ -39,6 +40,7 @@ export default function HomePage() {
       <WebsiteSchema />
       <SoftwareApplicationSchema />
       <EnhancedBackgroundPaths title="AI That Protects Your Deals, Your Clients, and Your Commission" />
+      <StatsBanner />
       <Features />
       <CTASection />
       <HowItWorks />
