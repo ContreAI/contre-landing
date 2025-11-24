@@ -70,7 +70,115 @@ export default function CallbackPage() {
           return
         }
 
-        // Check for code in query params (PKCE flow)
+        // Check for token in query params (email verification flow)
+        const token = searchParams.get('token')
+        const tokenType = searchParams.get('type')
+        
+        if (token && tokenType) {
+          console.log('[Callback] Found token in query params, type:', tokenType)
+          
+          try {
+            // Verify OTP token (for email verification)
+            const { data, error: verifyError } = await supabase.auth.verifyOtp({
+              token_hash: token,
+              type: tokenType as 'signup' | 'email' | 'recovery' | 'invite' | 'magiclink' | 'email_change',
+            })
+            
+            if (verifyError) {
+              console.error('[Callback] Error verifying token:', verifyError)
+              
+              // If token is already used/expired, Supabase may have already verified the email
+              // Check if we can get the user - if yes, email is verified, just redirect to login
+              if (verifyError.message?.includes('already been used') || 
+                  verifyError.message?.includes('expired') ||
+                  verifyError.message?.includes('invalid') ||
+                  verifyError.message?.includes('code verifier') ||
+                  verifyError.message?.includes('code_verifier')) {
+                
+                console.log('[Callback] Token error, but checking if email was already verified...')
+                // Try to get user - if successful, email is verified
+                const { data: { user }, error: userError } = await supabase.auth.getUser()
+                
+                if (!userError && user) {
+                  console.log('[Callback] User exists - email is verified! Redirecting to login')
+                  setStatus('success')
+                  const url = new URL(window.location.href)
+                  url.searchParams.delete('token')
+                  url.searchParams.delete('type')
+                  window.history.replaceState(null, '', url.pathname + url.search)
+                  
+                  timeoutId = setTimeout(() => {
+                    router.push('/authentication/login?verified=true')
+                  }, 1500)
+                  return
+                }
+              }
+              
+              // Handle rate limit specifically
+              if (verifyError.message?.includes('rate limit') || verifyError.status === 429) {
+                setStatus('error')
+                setErrorMessage('Too many verification attempts. Please wait a few minutes and try again, or request a new verification email.')
+                timeoutId = setTimeout(() => {
+                  router.push('/authentication/login?error=rate_limit')
+                }, 5000)
+                return
+              }
+              
+              // Generic error - but still check if user exists (email might be verified)
+              const { data: { user: checkUser } } = await supabase.auth.getUser()
+              if (checkUser) {
+                console.log('[Callback] Error but user exists - email verified, redirecting to login')
+                setStatus('success')
+                timeoutId = setTimeout(() => {
+                  router.push('/authentication/login?verified=true')
+                }, 1500)
+                return
+              }
+              
+              setStatus('error')
+              setErrorMessage(verifyError.message || 'Failed to verify email')
+              timeoutId = setTimeout(() => {
+                router.push('/authentication/login?error=verification_failed')
+              }, 3000)
+              return
+            }
+
+            if (data.session) {
+              console.log('[Callback] Session created from token verification')
+              setStatus('success')
+              
+              // Clear the token from URL
+              const url = new URL(window.location.href)
+              url.searchParams.delete('token')
+              url.searchParams.delete('type')
+              window.history.replaceState(null, '', url.pathname + url.search)
+              
+              const next = searchParams.get('next') || '/onboarding'
+              timeoutId = setTimeout(() => {
+                router.push(next)
+                router.refresh()
+              }, 1000)
+              return
+            } else {
+              setStatus('error')
+              setErrorMessage('Verification completed but no session was created. Please try signing in.')
+              timeoutId = setTimeout(() => {
+                router.push('/authentication/login?error=no_session_after_verification')
+              }, 3000)
+              return
+            }
+          } catch (err) {
+            console.error('[Callback] Unexpected error verifying token:', err)
+            setStatus('error')
+            setErrorMessage(err instanceof Error ? err.message : 'An unexpected error occurred during verification')
+            timeoutId = setTimeout(() => {
+              router.push('/authentication/login?error=verification_error')
+            }, 3000)
+            return
+          }
+        }
+        
+        // Check for code in query params (PKCE flow - fallback for other flows)
         const code = searchParams.get('code')
         if (code) {
           console.log('[Callback] Found code in query params (PKCE flow)')
@@ -81,6 +189,38 @@ export default function CallbackPage() {
             
             if (exchangeError) {
               console.error('[Callback] Error exchanging code:', exchangeError)
+              
+              // Handle missing code verifier (PKCE issue)
+              // If code verifier is missing, Supabase may have already verified the email
+              // Check if user exists - if yes, email is verified, redirect to login
+              if (exchangeError.message?.includes('code verifier') || 
+                  exchangeError.message?.includes('code_verifier') ||
+                  exchangeError.message?.includes('both auth code and code verifier')) {
+                
+                console.log('[Callback] Code verifier missing, but checking if email was already verified...')
+                // Try to get user - if successful, email is verified
+                const { data: { user }, error: userError } = await supabase.auth.getUser()
+                
+                if (!userError && user) {
+                  console.log('[Callback] User exists - email is verified! Redirecting to login')
+                  setStatus('success')
+                  const url = new URL(window.location.href)
+                  url.searchParams.delete('code')
+                  window.history.replaceState(null, '', url.pathname + url.search)
+                  
+                  timeoutId = setTimeout(() => {
+                    router.push('/authentication/login?verified=true')
+                  }, 1500)
+                  return
+                }
+                
+                setStatus('error')
+                setErrorMessage('This verification link requires a code verifier that is no longer available. Please request a new verification email - it will work from a fresh link.')
+                timeoutId = setTimeout(() => {
+                  router.push('/authentication/login?error=code_verifier_missing')
+                }, 5000)
+                return
+              }
               
               // Handle rate limit specifically
               if (exchangeError.message?.includes('rate limit') || exchangeError.status === 429) {
