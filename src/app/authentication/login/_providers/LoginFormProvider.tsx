@@ -41,19 +41,53 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
     setError(null)
 
     try {
+      // First check if the user exists and their verification status
+      const checkResponse = await fetch('/api/auth/check-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: values.email }),
+      })
+
+      if (checkResponse.ok) {
+        const { exists, verified } = await checkResponse.json()
+
+        // If user exists but is not verified, redirect to verification page
+        if (exists && !verified) {
+          // Sign them out if they somehow got signed in
+          await supabase.auth.signOut()
+          router.push(`/authentication/verify-email?email=${encodeURIComponent(values.email)}`)
+          return
+        }
+      }
+
+      // Proceed with login
       const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       })
 
       if (error) {
+        // Check if error is due to email not confirmed
+        if (error.message.toLowerCase().includes('email not confirmed') ||
+            error.message.toLowerCase().includes('email not verified')) {
+          router.push(`/authentication/verify-email?email=${encodeURIComponent(values.email)}`)
+          return
+        }
         throw error
       }
 
       if (data.user) {
+        // Double-check if user's email is verified
+        if (!data.user.email_confirmed_at) {
+          // Sign out and redirect to verification page
+          await supabase.auth.signOut()
+          router.push(`/authentication/verify-email?email=${encodeURIComponent(values.email)}`)
+          return
+        }
+
         // Get redirect destination from query param
         const redirectTo = searchParams.get('redirectTo')
-        
+
         if (redirectTo) {
           // External redirect (cookie already set by Supabase)
           window.location.href = redirectTo

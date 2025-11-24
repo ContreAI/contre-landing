@@ -13,8 +13,8 @@ interface SignupFormProps {
 export function SignupForm({ isLoading, error, success }: SignupFormProps) {
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 pt-8 pb-12 px-4 sm:px-6 lg:px-8">
-          <Card className="max-w-lg w-full space-y-8 p-8">
+      <div className="flex items-center bg-gray-50 pt-2 px-4 sm:px-6 lg:px-8">
+        <Card className="max-w-lg w-full space-y-8 p-8">
           <div className="text-center">
             <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
               <svg className="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -28,8 +28,8 @@ export function SignupForm({ isLoading, error, success }: SignupFormProps) {
               We've sent you a confirmation link. Please check your email to activate your account.
             </p>
             <div className="mt-6">
-              <a 
-                href="/authentication/login" 
+              <a
+                href="/authentication/login"
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
                 Return to sign in
@@ -42,7 +42,7 @@ export function SignupForm({ isLoading, error, success }: SignupFormProps) {
   }
 
   return (
-    <div className="flex items-center justify-center bg-gray-50 pt-8 pb-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8" style={{ paddingTop: '30px', paddingBottom: '48px' }}>
         <Card className="max-w-lg w-full space-y-8 p-10 pb-2">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

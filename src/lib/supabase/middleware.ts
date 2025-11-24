@@ -71,7 +71,7 @@ export async function updateSession(request: NextRequest) {
 
   // Protected routes (require authentication)
   const protectedRoutes = ['/onboarding', '/dashboard', '/settings', '/profile', '/transactions', '/admin']
-  const isProtectedRoute = protectedRoutes.some(route => 
+  const isProtectedRoute = protectedRoutes.some(route =>
     request.nextUrl.pathname.startsWith(route)
   )
 
@@ -87,7 +87,7 @@ export async function updateSession(request: NextRequest) {
   if (user && (request.nextUrl.pathname === '/authentication/login' || request.nextUrl.pathname === '/authentication/signup')) {
     // Check if there's a redirectTo param (coming from platform/workspace)
     const redirectTo = request.nextUrl.searchParams.get('redirectTo')
-    
+
     if (redirectTo) {
       // User is already logged in and came from workspace - send them back
       return NextResponse.redirect(redirectTo)

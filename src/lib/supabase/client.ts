@@ -24,7 +24,7 @@ export function createClient() {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     )
   }
-  
+
   // Client-side: Use custom cookie handlers with domain configuration
   const client = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
