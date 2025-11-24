@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getAdminClient } from '@/lib/supabase/admin'
+import { autoCompleteAgentOnboarding } from './become-agent/actions'
 
 export default async function OnboardingPage() {
   const supabase = await createClient()
@@ -45,14 +46,16 @@ export default async function OnboardingPage() {
     icon: string
     href?: string
     disabled?: boolean
+    isAutoSignup?: boolean
   }> = [
     {
       title: 'Individual Agent',
       description: 'Perfect for agents who want immediate access to Contre.',
       price: 'Get started at $49.99/mo with instant access',
       icon: '👤',
-      href: hasB2C ? undefined : '/onboarding/become-agent',
+      href: undefined,
       disabled: hasB2C,
+      isAutoSignup: !hasB2C,
     },
     {
       title: 'My Brokerage',
@@ -75,36 +78,66 @@ export default async function OnboardingPage() {
           {cards.map((card) => {
             const isDisabled = Boolean(card.disabled)
             const cardContent = (
-              <div
-                className={[
-                  'relative flex h-full flex-col rounded-2xl border p-6 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
-                  isDisabled
-                    ? 'border-slate-200 bg-slate-50 text-slate-500'
-                    : card.title === 'Individual Agent' && !hasB2C
-                      ? 'border-indigo-200 bg-indigo-50 ring-2 ring-indigo-200'
-                      : 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow'
-                ].join(' ')}
-              >
+              <>
                 <span className="text-3xl">{card.icon}</span>
                 <h2 className="mt-4 text-xl font-semibold text-slate-900">{card.title}</h2>
                 <p className="mt-2 text-sm text-slate-600">{card.description}</p>
                 <p className="mt-4 text-sm font-medium text-indigo-600">{card.price}</p>
-                <span
-                  className={[
-                    'mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition',
-                    isDisabled
-                      ? 'bg-slate-200 text-slate-500'
-                      : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                  ].join(' ')}
-                >
-                  {isDisabled ? 'Already Activated' : 'Select'}
-                </span>
-              </div>
+                {card.isAutoSignup ? (
+                  <button
+                    type="submit"
+                    className="mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  >
+                    Select
+                  </button>
+                ) : (
+                  <span
+                    className={[
+                      'mt-6 inline-flex w-full items-center justify-center rounded-lg px-4 py-2 text-sm font-medium shadow-sm transition',
+                      isDisabled
+                        ? 'bg-slate-200 text-slate-500'
+                        : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                    ].join(' ')}
+                  >
+                    {isDisabled ? 'Already Activated' : 'Select'}
+                  </span>
+                )}
+              </>
             )
+
+            if (card.isAutoSignup) {
+              return (
+                <form key={card.title} action={autoCompleteAgentOnboarding}>
+                  <div
+                    className={[
+                      'relative flex h-full flex-col rounded-2xl border p-6 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 cursor-pointer',
+                      isDisabled
+                        ? 'border-slate-200 bg-slate-50 text-slate-500'
+                        : card.title === 'Individual Agent' && !hasB2C
+                          ? 'border-indigo-200 bg-indigo-50 ring-2 ring-indigo-200'
+                          : 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow'
+                    ].join(' ')}
+                  >
+                    {cardContent}
+                  </div>
+                </form>
+              )
+            }
 
             if (!card.href || isDisabled) {
               return (
-                <div key={card.title} aria-disabled={isDisabled}>
+                <div
+                  key={card.title}
+                  aria-disabled={isDisabled}
+                  className={[
+                    'relative flex h-full flex-col rounded-2xl border p-6 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+                    isDisabled
+                      ? 'border-slate-200 bg-slate-50 text-slate-500'
+                      : card.title === 'Individual Agent' && !hasB2C
+                        ? 'border-indigo-200 bg-indigo-50 ring-2 ring-indigo-200'
+                        : 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow'
+                  ].join(' ')}
+                >
                   {cardContent}
                 </div>
               )
@@ -112,7 +145,18 @@ export default async function OnboardingPage() {
 
             return (
               <Link key={card.title} href={card.href} className="block focus:outline-none">
-                {cardContent}
+                <div
+                  className={[
+                    'relative flex h-full flex-col rounded-2xl border p-6 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500',
+                    isDisabled
+                      ? 'border-slate-200 bg-slate-50 text-slate-500'
+                      : card.title === 'Individual Agent' && !hasB2C
+                        ? 'border-indigo-200 bg-indigo-50 ring-2 ring-indigo-200'
+                        : 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow'
+                  ].join(' ')}
+                >
+                  {cardContent}
+                </div>
               </Link>
             )
           })}
