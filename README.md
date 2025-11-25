@@ -27,9 +27,5 @@ Open: http://localhost:3000
 - `/privacy` `/terms` `/cookies` - Legal
 - `/login` - Login with Google OAuth
 
-## Deploy
 
-```bash
-vercel --prod
-```
 
