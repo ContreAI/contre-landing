@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Bebas_Neue, Manrope } from 'next/font/google'
+import Script from 'next/script'
 import { defaultMetadata } from '@/lib/metadata'
 import { SimpleHeader } from '@/components/ui/simple-header'
 import './globals.css'
@@ -36,6 +37,12 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/contre-logo.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/contre-logo.png" />
+        <Script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="6b0a37b5-8a1e-4612-adee-e8397ef4f44a"
+          strategy="afterInteractive"
+        />
       </head>
       <body 
         className={`${inter.variable} ${bebasNeue.variable} ${manrope.variable} ${inter.className} antialiased`}
