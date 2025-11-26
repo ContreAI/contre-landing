@@ -6,12 +6,12 @@ function getCookieDomain(): string | undefined {
   if (process.env.NEXT_PUBLIC_COOKIE_DOMAIN) {
     return process.env.NEXT_PUBLIC_COOKIE_DOMAIN
   }
-  
+
   // In production, default to .contre.ai
   if (process.env.NODE_ENV === 'production') {
     return '.contre.ai'
   }
-  
+
   // In development without COOKIE_DOMAIN set, don't set domain (localhost only)
   return undefined
 }
@@ -36,10 +36,9 @@ export async function createClient() {
             cookiesToSet.forEach(({ name, value, options }) => {
               const cookieOptions = {
                 ...options,
-                ...(cookieDomain && { 
+                ...(cookieDomain && {
                   domain: cookieDomain,
-                  sameSite: 'lax' as const, // Works with both HTTP and HTTPS
-                  // No secure flag - allows cookies over HTTP
+                  sameSite: 'lax' as const,
                 }),
               }
               cookieStore.set(name, value, cookieOptions)
