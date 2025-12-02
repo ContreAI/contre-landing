@@ -3,7 +3,7 @@ import 'server-only'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import type { Category, BlogMeta, BlogPost } from './blog-types'
+import type { Avatar, Category, BlogMeta, BlogPost } from './blog-types'
 
 const POSTS_PATH = path.join(process.cwd(), 'content/blog')
 

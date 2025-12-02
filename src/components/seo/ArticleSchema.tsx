@@ -1,4 +1,4 @@
-import { BlogPost } from '@/lib/blog'
+import { BlogPost } from '@/lib/blog-types'
 
 interface ArticleSchemaProps {
   post: BlogPost
