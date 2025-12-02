@@ -21,6 +21,11 @@ export function SimpleHeader() {
 			href: '/agents',
 			isRoute: true,
 		},
+		{
+			label: 'Blog',
+			href: '/blog',
+			isRoute: true,
+		},
 	];
 
 	return (

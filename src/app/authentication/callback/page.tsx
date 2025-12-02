@@ -62,7 +62,7 @@ function CallbackContent() {
         }
 
         // Check for error in query params
-        const queryError = searchParams.get('error')
+        const queryError = searchParams?.get('error')
         if (queryError) {
           console.error('[Callback] Error in query:', queryError)
           setStatus('error')
@@ -74,8 +74,8 @@ function CallbackContent() {
         }
 
         // Check for token in query params (email verification flow)
-        const token = searchParams.get('token')
-        const tokenType = searchParams.get('type')
+        const token = searchParams?.get('token')
+        const tokenType = searchParams?.get('type')
         
         if (token && tokenType) {
           console.log('[Callback] Found token in query params, type:', tokenType)
@@ -156,7 +156,7 @@ function CallbackContent() {
               url.searchParams.delete('type')
               window.history.replaceState(null, '', url.pathname + url.search)
               
-              const next = searchParams.get('next') || '/onboarding'
+              const next = searchParams?.get('next') || '/onboarding'
               timeoutId = setTimeout(() => {
                 router.push(next)
                 router.refresh()
@@ -182,7 +182,7 @@ function CallbackContent() {
         }
         
         // Check for code in query params (PKCE flow - fallback for other flows)
-        const code = searchParams.get('code')
+        const code = searchParams?.get('code')
         if (code) {
           console.log('[Callback] Found code in query params (PKCE flow)')
           
@@ -263,7 +263,7 @@ function CallbackContent() {
               url.searchParams.delete('code')
               window.history.replaceState(null, '', url.pathname + url.search)
               
-              const next = searchParams.get('next') || '/onboarding'
+              const next = searchParams?.get('next') || '/onboarding'
               timeoutId = setTimeout(() => {
                 router.push(next)
                 router.refresh()
@@ -318,7 +318,7 @@ function CallbackContent() {
                   window.history.replaceState(null, '', window.location.pathname + window.location.search)
                   
                   // Get redirect destination
-                  const next = searchParams.get('next') || '/onboarding'
+                  const next = searchParams?.get('next') || '/onboarding'
                   
                   // Small delay to show success message
                   timeoutId = setTimeout(() => {
@@ -348,7 +348,7 @@ function CallbackContent() {
                 window.history.replaceState(null, '', window.location.pathname + window.location.search)
                 
                 // Get redirect destination
-                const next = searchParams.get('next') || '/onboarding'
+                const next = searchParams?.get('next') || '/onboarding'
                 
                 // Small delay to show success message
                 timeoutId = setTimeout(() => {
@@ -371,7 +371,7 @@ function CallbackContent() {
               // Clear the hash from URL
               window.history.replaceState(null, '', window.location.pathname + window.location.search)
               
-              const next = searchParams.get('next') || '/onboarding'
+              const next = searchParams?.get('next') || '/onboarding'
               timeoutId = setTimeout(() => {
                 router.push(next)
                 router.refresh()
@@ -414,7 +414,7 @@ function CallbackContent() {
           if (session) {
             console.log('[Callback] Session exists')
             setStatus('success')
-            const next = searchParams.get('next') || '/onboarding'
+            const next = searchParams?.get('next') || '/onboarding'
             timeoutId = setTimeout(() => {
               router.push(next)
               router.refresh()

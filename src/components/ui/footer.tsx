@@ -32,6 +32,7 @@ function Footer() {
       title: "Company",
       links: [
         { label: "About Us", href: "/about", isRoute: true },
+        { label: "Blog", href: "/blog", isRoute: true },
         { label: "Contact", href: "/contact", isRoute: true },
       ],
     },

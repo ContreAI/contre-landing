@@ -27,7 +27,7 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
 
   // Check for auth errors in URL
   useEffect(() => {
-    const errorParam = searchParams.get('error')
+    const errorParam = searchParams?.get('error')
     if (errorParam === 'auth_failed') {
       setError('Authentication failed. Please try again.')
     }
@@ -86,7 +86,7 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
         }
 
         // Get redirect destination from query param
-        const redirectTo = searchParams.get('redirectTo')
+        const redirectTo = searchParams?.get('redirectTo')
 
         if (redirectTo) {
           // External redirect (cookie already set by Supabase)

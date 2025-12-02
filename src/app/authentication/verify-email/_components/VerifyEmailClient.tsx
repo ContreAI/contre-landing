@@ -12,7 +12,7 @@ export function VerifyEmailClient() {
   const [resendSuccess, setResendSuccess] = useState(false)
   const [resendError, setResendError] = useState<string | null>(null)
   const searchParams = useSearchParams()
-  const email = searchParams.get('email')
+  const email = searchParams?.get('email')
   const supabase = createClient()
 
   const handleResendVerification = async () => {
