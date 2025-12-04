@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 export default function BrokeragesPage() {
   return (
     <>
-      <EnhancedBackgroundPaths title="Your Agents Are Skimming 200-Page HOA Packets. What Could Go Wrong?" />
+      <EnhancedBackgroundPaths title="Even the Best Agents Miss Things in the Paperwork" />
       <StatsBanner
         stat="32% of buyers feel the paperwork is overwhelming during the home purchase process"
         source="— Nasdaq"

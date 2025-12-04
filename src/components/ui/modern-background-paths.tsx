@@ -335,7 +335,7 @@ export default function EnhancedBackgroundPaths({
               transition={{ delay: 1, duration: 1 }}
               className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 font-light tracking-wide max-w-3xl mx-auto"
             >
-              Custom AI trained on your brokerage's documents catches the critical clauses buried in inspection reports, HOA docs, and title work—before they become E&O claims or unhappy clients.
+              Trained on your forms, your deadlines, your standards — we catch what gets missed before it costs you.
             </motion.p>
           </div>
 
@@ -363,7 +363,7 @@ export default function EnhancedBackgroundPaths({
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <span className="relative">
-                    Try Free Transaction Risk Assessment
+                    Let's Train Your Purchase Agreement Free
                     <motion.span
                       className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[#264E36] to-[#607D3B] group-hover:w-full transition-all duration-300"
                       initial={{ width: 0 }}
