@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import EnhancedBackgroundPaths from "@/components/ui/modern-background-paths"
-import { StatsBanner } from "@/components/ui/stats-banner"
+import { StatsBannerSimple } from "@/components/ui/stats-banner-simple"
 import { IntegrationBanner } from "@/components/ui/integration-banner"
 import { FeaturesBrokerages } from "@/components/ui/features-brokerages"
 import { CTASectionBrokerages } from "@/components/ui/cta-section-brokerages"
@@ -33,14 +33,14 @@ export default function BrokeragesPage() {
   return (
     <>
       <EnhancedBackgroundPaths title="Even the Best Agents Miss Things in the Paperwork" />
-      <StatsBanner
+      <StatsBannerSimple
         stat="32% of buyers feel the paperwork is overwhelming during the home purchase process"
         source="— Nasdaq"
       />
       <IntegrationBanner />
       <FeaturesBrokerages />
       <CTASectionBrokerages />
-      <StatsBanner
+      <StatsBannerSimple
         stat="59% of Realtors have seen transactions delayed or stalled due to poor document management"
         source="— Adobe, 2024"
       />

@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import EnhancedBackgroundPathsAgents from "@/components/ui/modern-background-paths-agents"
-import { StatsBanner } from "@/components/ui/stats-banner"
+import { StatsBannerSimple } from "@/components/ui/stats-banner-simple"
 import { FeaturesAgents } from "@/components/ui/features-agents"
 import { CTASectionAgents } from "@/components/ui/cta-section-agents"
 import { CTASectionAltAgents } from "@/components/ui/cta-section-alt-agents"
@@ -32,14 +32,14 @@ export default function AgentsPage() {
   return (
     <>
       <EnhancedBackgroundPathsAgents />
-      <StatsBanner
+      <StatsBannerSimple
         stat="32% of buyers feel the paperwork is overwhelming during the home purchase process"
         source="— Nasdaq"
         variant="seaglass"
       />
       <FeaturesAgents />
       <CTASectionAgents />
-      <StatsBanner
+      <StatsBannerSimple
         stat="59% of Realtors have seen transactions delayed or stalled due to poor document management"
         source="— Adobe, 2024"
         variant="seaglass"
