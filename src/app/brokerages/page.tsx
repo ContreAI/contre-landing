@@ -1,15 +1,12 @@
 import { Metadata } from 'next'
-import EnhancedBackgroundPaths from "@/components/ui/modern-background-paths"
-import { StatsBannerSimple } from "@/components/ui/stats-banner-simple"
-import { IntegrationBanner } from "@/components/ui/integration-banner"
-import { FeaturesBrokerages } from "@/components/ui/features-brokerages"
-import { CTASectionBrokerages } from "@/components/ui/cta-section-brokerages"
-import { CTASectionAltBrokerages } from "@/components/ui/cta-section-alt-brokerages"
+import EnhancedBackgroundPathsBrokerages from "@/components/ui/modern-background-paths-brokerages"
 import { HowItWorksBrokerages } from "@/components/ui/how-it-works-brokerages"
-import { FeaturesSectionWithHoverEffectsBrokerages } from "@/components/ui/feature-section-with-hover-effects-brokerages"
-import { FeatureTabsBrokerages } from "@/components/ui/feature-tabs-brokerages"
-import { FeatureCards } from "@/components/ui/feature-cards"
 import { FAQSection } from "@/components/ui/faq-section"
+import { StakesSectionBrokerages } from "@/components/ui/stakes-section-brokerages"
+import { SolutionSectionBrokerages } from "@/components/ui/solution-section-brokerages"
+import { EmpathySectionBrokerages } from "@/components/ui/empathy-section-brokerages"
+import { HowContreWorksBrokerages } from "@/components/ui/how-contre-works-brokerages"
+import { AssessmentCTABrokerages } from "@/components/ui/assessment-cta-brokerages"
 import Footer from "@/components/ui/footer"
 
 export const metadata: Metadata = {
@@ -32,23 +29,13 @@ export const metadata: Metadata = {
 export default function BrokeragesPage() {
   return (
     <>
-      <EnhancedBackgroundPaths title="Even the Best Agents Miss Things in the Paperwork" />
-      <StatsBannerSimple
-        stat="32% of buyers feel the paperwork is overwhelming during the home purchase process"
-        source="— Nasdaq"
-      />
-      <IntegrationBanner />
-      <FeaturesBrokerages />
-      <CTASectionBrokerages />
-      <StatsBannerSimple
-        stat="59% of Realtors have seen transactions delayed or stalled due to poor document management"
-        source="— Adobe, 2024"
-      />
+      <EnhancedBackgroundPathsBrokerages />
+      <StakesSectionBrokerages />
+      <SolutionSectionBrokerages />
+      <EmpathySectionBrokerages />
       <HowItWorksBrokerages />
-      <FeaturesSectionWithHoverEffectsBrokerages />
-      <CTASectionAltBrokerages />
-      <FeatureTabsBrokerages />
-      <FeatureCards />
+      <HowContreWorksBrokerages />
+      <AssessmentCTABrokerages />
       <FAQSection />
       <Footer />
     </>
