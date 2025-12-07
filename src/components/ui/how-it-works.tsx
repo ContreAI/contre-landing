@@ -8,20 +8,20 @@ export function HowItWorks() {
     {
       number: "01",
       icon: Upload,
-      title: "Upload Contract or Document",
-      description: "Simply drag and drop your real estate contracts, addendums, HOA documents, or any transaction paperwork. Our AI processes everything in seconds.",
+      title: "Upload Any Document",
+      description: "Drag and drop contracts, HOAs, title reports, disclosures — any transaction paperwork. Processed in seconds.",
     },
     {
       number: "02",
       icon: FileSearch,
-      title: "View Report & Deadlines",
-      description: "Get an instant comprehensive report highlighting risks, conflicts, missing terms, and critical deadlines you need to track.",
+      title: "Get Your One-Page Report",
+      description: "Every deadline, red flag, and conflict extracted. 100 pages becomes 1 page of what matters.",
     },
     {
       number: "03",
       icon: MessageCircle,
-      title: "Ask In-Depth Questions",
-      description: "Use our AI chatbot to dig deeper into any concerns, clarify confusing terms, or explore specific scenarios related to your documents.",
+      title: "Ask Anything",
+      description: "Use the AI chatbot to dig deeper, clarify terms, or explore scenarios. Like having an expert on call 24/7.",
     },
   ]
 
@@ -40,7 +40,7 @@ export function HowItWorks() {
             How It Works
           </h2>
           <p className="text-lg md:text-xl text-slate-600 font-['Manrope'] max-w-2xl mx-auto">
-            Three simple steps to protect your deals and never miss a critical detail again.
+            Three steps. Every detail. Nothing missed.
           </p>
         </motion.div>
 

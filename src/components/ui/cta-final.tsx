@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 
-export function CTASectionAlt() {
+export function CTAFinal() {
   return (
     <section className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-[#264E36] via-[#607D3B] to-[#9DBFBF]">
       {/* Decorative gradient overlays */}
@@ -26,16 +26,16 @@ export function CTASectionAlt() {
           className="max-w-4xl mx-auto"
         >
           {/* Headline */}
-          <h2 className="text-5xl md:text-7xl font-semibold font-['Bebas_Neue'] text-white mb-6">
-            Protect Every Deal. Automatically.
+          <h2 className="text-5xl md:text-7xl font-semibold font-bebas text-white mb-6 tracking-wide">
+            Every Detail. Every Deadline. 60 Seconds.
           </h2>
 
           {/* Subheadline */}
-          <p className="text-lg md:text-xl text-white/90 font-['Manrope'] max-w-2xl mx-auto mb-10">
-            Stop scrolling through 50 pages at 10pm. Contre already did.
+          <p className="text-lg md:text-xl text-white/90 font-manrope max-w-2xl mx-auto mb-10">
+            Upload your first contract and see what Contre catches.
           </p>
 
-          {/* CTA Button - White version for dark background */}
+          {/* CTA Button */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             whileInView={{ opacity: 1, scale: 1 }}
@@ -51,7 +51,8 @@ export function CTASectionAlt() {
                             bg-gradient-to-r from-[#264E36] to-[#607D3B] hover:from-[#1a3624] hover:to-[#4a5f2d]
                             text-white transition-all duration-300
                             group-hover:-translate-y-1 group-hover:shadow-2xl
-                            border-0 backdrop-blur-sm font-['Manrope']"
+                            border-0 backdrop-blur-sm font-manrope"
+                onClick={() => window.open('https://audit.contre.ai', '_blank')}
               >
                 <motion.span
                   className="flex items-center gap-3"
@@ -59,7 +60,7 @@ export function CTASectionAlt() {
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <span className="relative">
-                    Upload Your Contract Free
+                    Get Started Free
                     <motion.span
                       className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white group-hover:w-full transition-all duration-300"
                       initial={{ width: 0 }}
@@ -76,28 +77,6 @@ export function CTASectionAlt() {
                 </motion.span>
               </Button>
             </div>
-          </motion.div>
-
-          {/* Trust indicators */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.5, duration: 1 }}
-            className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-white/80 font-['Manrope']"
-          >
-            <span className="flex items-center gap-2">
-              <span className="text-[#9DBFBF]">✓</span>
-              No credit card required
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="text-[#9DBFBF]">✓</span>
-              Takes 2 minutes
-            </span>
-            <span className="flex items-center gap-2">
-              <span className="text-[#9DBFBF]">✓</span>
-              Cancel anytime
-            </span>
           </motion.div>
         </motion.div>
       </div>

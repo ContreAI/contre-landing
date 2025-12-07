@@ -31,7 +31,7 @@ interface FeatureTabsProps {
 
 const FeatureTabs = ({
   badge = "How Contre Works",
-  heading = "Three Ways to Turn Every Transaction Into a 5-Star Experience",
+  heading = "Three Ways Contre Protects Your Deals",
   description = "Upload your documents. We handle the rest. Your clients think you're a genius.",
   tabs = [
     {

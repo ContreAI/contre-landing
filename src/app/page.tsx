@@ -1,14 +1,15 @@
 import { Metadata } from 'next'
 import EnhancedBackgroundPaths from "@/components/ui/modern-background-paths"
 import { StatsBanner } from "@/components/ui/stats-banner"
-import { Features } from "@/components/ui/features-1"
-import { CTASection } from "@/components/ui/cta-section"
+import { DocumentTable } from "@/components/ui/document-table"
+import { FridayNightSection } from "@/components/ui/friday-night-section"
 import { CTASectionAlt } from "@/components/ui/cta-section-alt"
 import { HowItWorks } from "@/components/ui/how-it-works"
-import { FeaturesSectionWithHoverEffects } from "@/components/ui/feature-section-with-hover-effects"
 import { FeatureTabs } from "@/components/ui/feature-tabs"
 import { FeatureCards } from "@/components/ui/feature-cards"
+import { FeatureCardsAgents } from "@/components/ui/feature-cards-agents"
 import { FAQSection } from "@/components/ui/faq-section"
+import { CTAFinal } from "@/components/ui/cta-final"
 import Footer from "@/components/ui/footer"
 import { OrganizationSchema, WebsiteSchema, SoftwareApplicationSchema } from "@/components/seo/StructuredData"
 
@@ -39,16 +40,17 @@ export default function HomePage() {
       <OrganizationSchema />
       <WebsiteSchema />
       <SoftwareApplicationSchema />
-      <EnhancedBackgroundPaths title="AI That Protects Your Deals, Your Clients, and Your Commission" />
+      <EnhancedBackgroundPaths title="Catch Every Detail. Track Every Deadline. 60 Seconds." />
       <StatsBanner />
-      <Features />
-      <CTASection />
+      <DocumentTable />
+      <FridayNightSection />
       <HowItWorks />
-      <FeaturesSectionWithHoverEffects />
       <CTASectionAlt />
       <FeatureTabs />
       <FeatureCards />
+      <FeatureCardsAgents />
       <FAQSection />
+      <CTAFinal />
       <Footer />
     </>
   )
