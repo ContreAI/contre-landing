@@ -8,20 +8,17 @@ export function HowItWorksAgents() {
     {
       number: "01",
       icon: Upload,
-      title: "Upload Contract or Document",
-      description: "Simply drag and drop your real estate contracts, addendums, HOA documents, or any transaction paperwork. Our AI processes everything in seconds.",
+      title: "Upload your contract — takes 30 seconds",
     },
     {
       number: "02",
       icon: FileSearch,
-      title: "View Report & Deadlines",
-      description: "Get an instant comprehensive report highlighting risks, conflicts, missing terms, and critical deadlines you need to track.",
+      title: "Get your analysis — every deadline, every red flag, every conflict",
     },
     {
       number: "03",
       icon: MessageCircle,
-      title: "Ask In-Depth Questions",
-      description: "Use our AI chatbot to dig deeper into any concerns, clarify confusing terms, or explore specific scenarios related to your documents.",
+      title: "Never wonder what you missed — send with confidence",
     },
   ]
 
@@ -77,12 +74,9 @@ export function HowItWorksAgents() {
                 </div>
 
                 {/* Content */}
-                <h3 className="text-2xl font-semibold font-['Bebas_Neue'] text-[#264E36] mb-4 text-center">
+                <h3 className="text-xl font-semibold font-['Manrope'] text-[#264E36] text-center">
                   {step.title}
                 </h3>
-                <p className="text-slate-600 font-['Manrope'] text-center leading-relaxed">
-                  {step.description}
-                </p>
               </div>
             </motion.div>
           ))}
