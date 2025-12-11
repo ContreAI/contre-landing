@@ -372,7 +372,7 @@ export function EnterprisePricingSection() {
                       ? "bg-[#264E36] text-white shadow-lg"
                       : "bg-white border border-slate-200 text-slate-600 hover:border-[#9DBFBF]"
                     }`}
-                  onClick={() => setTransactionVolume(tier.maxDeals)}
+                  onClick={() => setSliderPosition(sliderValues.indexOf(tier.maxDeals))}
                 >
                   <p className="text-xs font-['Manrope'] opacity-70">Up to</p>
                   <p className="text-xl font-bold font-['Bebas_Neue']">{tier.maxDeals}</p>
