@@ -3,12 +3,19 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Sheet, SheetContent, SheetFooter } from '@/components/ui/sheet';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { MenuToggle } from '@/components/ui/menu-toggle';
 
 export function SimpleHeader() {
 	const [open, setOpen] = React.useState(false);
+	const pathname = usePathname();
+
+	// Hide header on authentication pages
+	if (pathname?.startsWith('/authentication')) {
+		return null;
+	}
 
 	const links = [
 		{
