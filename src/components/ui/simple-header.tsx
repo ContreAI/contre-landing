@@ -22,6 +22,11 @@ export function SimpleHeader() {
 			isRoute: true,
 		},
 		{
+			label: 'Pricing',
+			href: '/pricing',
+			isRoute: true,
+		},
+		{
 			label: 'Blog',
 			href: '/blog',
 			isRoute: true,
