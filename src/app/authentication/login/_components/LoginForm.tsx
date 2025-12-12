@@ -9,9 +9,10 @@ import { Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react'
 interface LoginFormProps {
   isLoading: boolean
   error: string | null
+  handleOAuthSignIn: (provider: 'google' | 'apple') => Promise<void>
 }
 
-export function LoginForm({ isLoading, error }: LoginFormProps) {
+export function LoginForm({ isLoading, error, handleOAuthSignIn }: LoginFormProps) {
   const { values, errors, touched, handleChange, handleBlur } =
     useFormikContext<LoginFormValues>()
   const [showPassword, setShowPassword] = useState(false)
@@ -141,7 +142,8 @@ export function LoginForm({ isLoading, error }: LoginFormProps) {
         <div className="space-y-3">
           <button
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            onClick={() => handleOAuthSignIn('google')}
+            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -167,7 +169,8 @@ export function LoginForm({ isLoading, error }: LoginFormProps) {
 
           <button
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            onClick={() => handleOAuthSignIn('apple')}
+            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">

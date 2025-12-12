@@ -9,8 +9,8 @@ import { Loader2 } from 'lucide-react'
 function LoginFormContent() {
   return (
     <LoginFormProvider>
-      {({ isLoading, error }) => (
-        <LoginForm isLoading={isLoading} error={error} />
+      {({ isLoading, error, handleOAuthSignIn }) => (
+        <LoginForm isLoading={isLoading} error={error} handleOAuthSignIn={handleOAuthSignIn} />
       )}
     </LoginFormProvider>
   )

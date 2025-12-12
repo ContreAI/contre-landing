@@ -9,9 +9,10 @@ interface SignupFormProps {
   isLoading: boolean
   error: string | null
   success: boolean
+  handleOAuthSignIn: (provider: 'google' | 'apple') => Promise<void>
 }
 
-export function SignupForm({ isLoading, error, success }: SignupFormProps) {
+export function SignupForm({ isLoading, error, success, handleOAuthSignIn }: SignupFormProps) {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -216,7 +217,8 @@ export function SignupForm({ isLoading, error, success }: SignupFormProps) {
         <div className="space-y-3">
           <button
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            onClick={() => handleOAuthSignIn('google')}
+            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -242,7 +244,8 @@ export function SignupForm({ isLoading, error, success }: SignupFormProps) {
 
           <button
             type="button"
-            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            onClick={() => handleOAuthSignIn('apple')}
+            className="w-full flex items-center justify-center gap-3 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isLoading}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
