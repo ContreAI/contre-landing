@@ -16,7 +16,7 @@ function Footer() {
       title: "Product",
       links: [
         { label: "Features", href: "#features" },
-        { label: "Pricing", href: "#pricing" },
+        { label: "Pricing", href: "/pricing", isRoute: true },
         { label: "Integrations", href: "#integrations" },
       ],
     },
@@ -32,6 +32,7 @@ function Footer() {
       title: "Company",
       links: [
         { label: "About Us", href: "/about", isRoute: true },
+        { label: "Blog", href: "/blog", isRoute: true },
         { label: "Contact", href: "/contact", isRoute: true },
       ],
     },

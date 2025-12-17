@@ -13,6 +13,7 @@ interface SignupFormProviderProps {
     isLoading: boolean
     error: string | null
     success: boolean
+    handleOAuthSignIn: (provider: 'google' | 'apple') => Promise<void>
   }) => React.ReactNode
 }
 
@@ -26,6 +27,36 @@ export function SignupFormProvider({
   const [success, setSuccess] = useState(false)
   const router = useRouter()
   const supabase = createClient()
+
+  const handleOAuthSignIn = async (provider: 'google' | 'apple') => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') || window.location.origin
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${siteUrl}/authentication/callback?next=/onboarding`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      })
+
+      if (error) {
+        throw error
+      }
+
+      // OAuth redirect will happen automatically via data.url
+      // The callback handler will process the OAuth response
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'OAuth sign-up failed')
+      setIsLoading(false)
+    }
+  }
 
   const handleSubmit = async (
     values: B2CSignupValues,
@@ -138,7 +169,7 @@ export function SignupFormProvider({
       validationSchema={validationSchema}
       onSubmit={handleSubmit}
     >
-      {children({ isLoading, error, success })}
+      {children({ isLoading, error, success, handleOAuthSignIn })}
     </Formik>
   )
 }

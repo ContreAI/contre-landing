@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef, Suspense } from 'react'
+import { useEffect, useState, useRef, Suspense, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { Loader2, AlertCircle, CheckCircle } from 'lucide-react'
@@ -15,6 +15,48 @@ function CallbackContent() {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const isProcessingRef = useRef(false)
+  
+  // Helper to verify cookies are set correctly and accessible
+  const verifyCookiesSet = useCallback(async (retries: number = 0): Promise<boolean> => {
+    const maxRetries = 5
+    const retryDelay = 300
+    
+    // Check if auth cookies exist
+    const cookies = document.cookie.split('; ').map(c => c.split('=')[0])
+    const authCookieNames = cookies.filter(name => name.startsWith('sb-') && name.includes('-auth-token'))
+    const hasAuthCookie = authCookieNames.length > 0
+    
+    if (hasAuthCookie) {
+      console.log('[Callback] Auth cookies found:', authCookieNames)
+      
+      // Verify that we can actually read the session (cookies are accessible)
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        console.log('[Callback] Session is accessible via cookies - cookies are properly set')
+        return true
+      } else {
+        console.warn(`[Callback] Cookies exist but session is not accessible (retry ${retries}/${maxRetries})`)
+        
+        // Retry if we haven't exceeded max retries
+        if (retries < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, retryDelay))
+          return verifyCookiesSet(retries + 1)
+        }
+        
+        return false
+      }
+    }
+    
+    console.warn(`[Callback] No auth cookies found (retry ${retries}/${maxRetries})`)
+    
+    // Retry if we haven't exceeded max retries
+    if (retries < maxRetries) {
+      await new Promise(resolve => setTimeout(resolve, retryDelay))
+      return verifyCookiesSet(retries + 1)
+    }
+    
+    return false
+  }, [supabase])
 
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
@@ -62,7 +104,7 @@ function CallbackContent() {
         }
 
         // Check for error in query params
-        const queryError = searchParams.get('error')
+        const queryError = searchParams?.get('error')
         if (queryError) {
           console.error('[Callback] Error in query:', queryError)
           setStatus('error')
@@ -74,8 +116,8 @@ function CallbackContent() {
         }
 
         // Check for token in query params (email verification flow)
-        const token = searchParams.get('token')
-        const tokenType = searchParams.get('type')
+        const token = searchParams?.get('token')
+        const tokenType = searchParams?.get('type')
         
         if (token && tokenType) {
           console.log('[Callback] Found token in query params, type:', tokenType)
@@ -156,7 +198,7 @@ function CallbackContent() {
               url.searchParams.delete('type')
               window.history.replaceState(null, '', url.pathname + url.search)
               
-              const next = searchParams.get('next') || '/onboarding'
+              const next = searchParams?.get('next') || '/onboarding'
               timeoutId = setTimeout(() => {
                 router.push(next)
                 router.refresh()
@@ -182,12 +224,49 @@ function CallbackContent() {
         }
         
         // Check for code in query params (PKCE flow - fallback for other flows)
-        const code = searchParams.get('code')
+        const code = searchParams?.get('code')
         if (code) {
           console.log('[Callback] Found code in query params (PKCE flow)')
           
+          // IMPORTANT: Remove code from URL immediately to prevent Supabase auto-exchange
+          // Supabase's createBrowserClient automatically exchanges codes when it sees them in the URL
+          // By removing it immediately, we prevent the duplicate exchange
+          const url = new URL(window.location.href)
+          url.searchParams.delete('code')
+          window.history.replaceState(null, '', url.pathname + url.search)
+          
+          // Check if Supabase already auto-exchanged before we removed the code
+          // Wait a moment to see if auto-exchange completed
+          await new Promise(resolve => setTimeout(resolve, 200))
+          
+          const { data: { session: existingSession } } = await supabase.auth.getSession()
+          
+          if (existingSession) {
+            console.log('[Callback] Session already exists (Supabase auto-exchanged code before we removed it)')
+            
+            // IMPORTANT: Ensure session cookies are properly set with correct domain
+            // Wait to ensure cookies are persisted
+            await new Promise(resolve => setTimeout(resolve, 300))
+            
+            // Verify session is still accessible
+            const { data: { session: verifySession } } = await supabase.auth.getSession()
+            if (!verifySession) {
+              console.warn('[Callback] Session lost, this might be a cookie domain issue')
+            }
+            
+            setStatus('success')
+            
+            const next = searchParams?.get('next') || '/onboarding'
+            timeoutId = setTimeout(() => {
+              router.push(next)
+              router.refresh()
+            }, 1000)
+            return
+          }
+          
           try {
-            // Exchange code for session
+            // Manual exchange (code is now removed from URL so Supabase won't auto-exchange again)
+            console.log('[Callback] No existing session, exchanging code manually...')
             const { data: { session }, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
             
             if (exchangeError) {
@@ -256,18 +335,53 @@ function CallbackContent() {
 
             if (session) {
               console.log('[Callback] Session created from code exchange')
+              console.log('[Callback] Current domain:', window.location.hostname)
+              
+              // IMPORTANT: Ensure session is properly persisted with correct cookie domain
+              // This ensures cookies are accessible across subdomains (platform.local.contre.ai)
+              // Wait for Supabase to set cookies
+              await new Promise(resolve => setTimeout(resolve, 500))
+              
+              // Verify cookies are actually set and accessible (with retries)
+              console.log('[Callback] Verifying cookies are set and accessible...')
+              const cookiesSet = await verifyCookiesSet()
+              
+              if (!cookiesSet) {
+                console.error('[Callback] ERROR: Cookies not accessible after retries - session may not work on redirect')
+                setStatus('error')
+                setErrorMessage('Session could not be established. Please try logging in again.')
+                timeoutId = setTimeout(() => {
+                  router.push('/authentication/login?error=cookies_not_accessible')
+                }, 3000)
+                return
+              }
+              
+              // Additional wait to ensure cookies are fully persisted before redirect
+              // This is critical for cross-subdomain cookie sharing
+              console.log('[Callback] Cookies verified. Waiting for full persistence before redirect...')
+              await new Promise(resolve => setTimeout(resolve, 1000))
+              
+              // Final verification that session is still accessible
+              const { data: { session: finalSession } } = await supabase.auth.getSession()
+              if (!finalSession) {
+                console.error('[Callback] ERROR: Session lost after cookie verification')
+                setStatus('error')
+                setErrorMessage('Session was lost. Please try logging in again.')
+                timeoutId = setTimeout(() => {
+                  router.push('/authentication/login?error=session_lost')
+                }, 3000)
+                return
+              }
+              
               setStatus('success')
               
-              // Clear the code from URL
-              const url = new URL(window.location.href)
-              url.searchParams.delete('code')
-              window.history.replaceState(null, '', url.pathname + url.search)
-              
-              const next = searchParams.get('next') || '/onboarding'
+              // Code already removed from URL above
+              const next = searchParams?.get('next') || '/onboarding'
+              console.log(`[Callback] Redirecting to: ${next} (cookies should be available)`)
               timeoutId = setTimeout(() => {
                 router.push(next)
                 router.refresh()
-              }, 1000)
+              }, 1500) // Increased delay to ensure cookies are sent with redirect
               return
             } else {
               setStatus('error')
@@ -318,7 +432,7 @@ function CallbackContent() {
                   window.history.replaceState(null, '', window.location.pathname + window.location.search)
                   
                   // Get redirect destination
-                  const next = searchParams.get('next') || '/onboarding'
+                  const next = searchParams?.get('next') || '/onboarding'
                   
                   // Small delay to show success message
                   timeoutId = setTimeout(() => {
@@ -348,7 +462,7 @@ function CallbackContent() {
                 window.history.replaceState(null, '', window.location.pathname + window.location.search)
                 
                 // Get redirect destination
-                const next = searchParams.get('next') || '/onboarding'
+                const next = searchParams?.get('next') || '/onboarding'
                 
                 // Small delay to show success message
                 timeoutId = setTimeout(() => {
@@ -371,7 +485,7 @@ function CallbackContent() {
               // Clear the hash from URL
               window.history.replaceState(null, '', window.location.pathname + window.location.search)
               
-              const next = searchParams.get('next') || '/onboarding'
+              const next = searchParams?.get('next') || '/onboarding'
               timeoutId = setTimeout(() => {
                 router.push(next)
                 router.refresh()
@@ -414,7 +528,7 @@ function CallbackContent() {
           if (session) {
             console.log('[Callback] Session exists')
             setStatus('success')
-            const next = searchParams.get('next') || '/onboarding'
+            const next = searchParams?.get('next') || '/onboarding'
             timeoutId = setTimeout(() => {
               router.push(next)
               router.refresh()
@@ -447,7 +561,7 @@ function CallbackContent() {
         authListener.data.subscription.unsubscribe()
       }
     }
-  }, [router, supabase.auth, searchParams])
+  }, [router, supabase.auth, searchParams, verifyCookiesSet])
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

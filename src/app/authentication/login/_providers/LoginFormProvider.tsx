@@ -10,6 +10,7 @@ interface LoginFormProviderProps {
   children: (props: {
     isLoading: boolean
     error: string | null
+    handleOAuthSignIn: (provider: 'google' | 'apple') => Promise<void>
   }) => React.ReactNode
 }
 
@@ -27,11 +28,45 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
 
   // Check for auth errors in URL
   useEffect(() => {
-    const errorParam = searchParams.get('error')
+    const errorParam = searchParams?.get('error')
     if (errorParam === 'auth_failed') {
       setError('Authentication failed. Please try again.')
     }
   }, [searchParams])
+
+  const handleOAuthSignIn = async (provider: 'google' | 'apple') => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') || window.location.origin
+      
+      // Get redirect destination from query param
+      const redirectTo = searchParams?.get('redirectTo')
+      const redirectPath = redirectTo || '/dashboard'
+      
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: {
+          redirectTo: `${siteUrl}/authentication/callback?next=${encodeURIComponent(redirectPath)}`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      })
+
+      if (error) {
+        throw error
+      }
+
+      // OAuth redirect will happen automatically via data.url
+      // The callback handler will process the OAuth response
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'OAuth sign-in failed')
+      setIsLoading(false)
+    }
+  }
 
   const handleSubmit = async (
     values: LoginFormValues,
@@ -86,7 +121,7 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
         }
 
         // Get redirect destination from query param
-        const redirectTo = searchParams.get('redirectTo')
+        const redirectTo = searchParams?.get('redirectTo')
 
         if (redirectTo) {
           // External redirect (cookie already set by Supabase)
@@ -111,7 +146,7 @@ export function LoginFormProvider({ children }: LoginFormProviderProps) {
       validationSchema={loginFormSchema}
       onSubmit={handleSubmit}
     >
-      {children({ isLoading, error })}
+      {children({ isLoading, error, handleOAuthSignIn })}
     </Formik>
   )
 }

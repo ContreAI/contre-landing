@@ -1,14 +1,11 @@
 import { Metadata } from 'next'
 import EnhancedBackgroundPathsAgents from "@/components/ui/modern-background-paths-agents"
-import { StatsBanner } from "@/components/ui/stats-banner"
-import { FeaturesAgents } from "@/components/ui/features-agents"
-import { CTASectionAgents } from "@/components/ui/cta-section-agents"
-import { CTASectionAltAgents } from "@/components/ui/cta-section-alt-agents"
+import { ThoroughSectionAgents } from "@/components/ui/thorough-section-agents"
+import { FridayNightSectionAgents } from "@/components/ui/friday-night-section-agents"
 import { HowItWorksAgents } from "@/components/ui/how-it-works-agents"
-import { FeaturesSectionWithHoverEffectsAgents } from "@/components/ui/feature-section-with-hover-effects-agents"
-import { FeatureTabsAgents } from "@/components/ui/feature-tabs-agents"
-import { FeatureCardsAgents } from "@/components/ui/feature-cards-agents"
-import { FAQSectionAgents } from "@/components/ui/faq-section-agents"
+import { AgentNeverMissesSection } from "@/components/ui/agent-never-misses-section"
+import { BeforeAfterSectionAgents } from "@/components/ui/before-after-section-agents"
+import { FinalCTASectionAgents } from "@/components/ui/final-cta-section-agents"
 import Footer from "@/components/ui/footer"
 
 export const metadata: Metadata = {
@@ -32,24 +29,12 @@ export default function AgentsPage() {
   return (
     <>
       <EnhancedBackgroundPathsAgents />
-      <StatsBanner
-        stat="32% of buyers feel the paperwork is overwhelming during the home purchase process"
-        source="— Nasdaq"
-        variant="seaglass"
-      />
-      <FeaturesAgents />
-      <CTASectionAgents />
-      <StatsBanner
-        stat="59% of Realtors have seen transactions delayed or stalled due to poor document management"
-        source="— Adobe, 2024"
-        variant="seaglass"
-      />
+      <ThoroughSectionAgents />
+      <FridayNightSectionAgents />
       <HowItWorksAgents />
-      <FeaturesSectionWithHoverEffectsAgents />
-      <CTASectionAltAgents />
-      <FeatureTabsAgents />
-      <FeatureCardsAgents />
-      <FAQSectionAgents />
+      <AgentNeverMissesSection />
+      <BeforeAfterSectionAgents />
+      <FinalCTASectionAgents />
       <Footer />
     </>
   )

@@ -228,7 +228,7 @@ function SpiralPaths() {
 export default function EnhancedBackgroundPathsAgents() {
   const [currentPattern] = useState(2) // Set to 2 for geometric pattern
   const patterns = ['neural', 'flow', 'geometric', 'spiral']
-  const title = "Look Like You Actually Read All 200 Pages (Because Your AI Did)"
+  const title = "Every detail. Every deadline. Every time."
   const words = title.split(" ")
 
   const renderPattern = () => {
@@ -324,7 +324,7 @@ export default function EnhancedBackgroundPathsAgents() {
               transition={{ delay: 1, duration: 1 }}
               className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 font-light tracking-wide max-w-3xl mx-auto font-['Manrope']"
             >
-              Generate professional document summaries and get instant answers to any question about inspections, title work, or HOA docs—impressing clients other agents leave in the dark.
+              Upload your contract. Know exactly what needs attention. Never wonder what you missed.
             </motion.p>
           </div>
 
@@ -351,7 +351,7 @@ export default function EnhancedBackgroundPathsAgents() {
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <span className="relative">
-                    Upload a Contract & See the Summary
+                    Upload Your First Contract
                     <motion.span
                       className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[#264E36] to-[#607D3B] group-hover:w-full transition-all duration-300"
                       initial={{ width: 0 }}

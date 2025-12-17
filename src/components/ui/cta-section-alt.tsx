@@ -27,12 +27,12 @@ export function CTASectionAlt() {
         >
           {/* Headline */}
           <h2 className="text-5xl md:text-7xl font-semibold font-['Bebas_Neue'] text-white mb-6">
-            Stop Losing Deals to Paperwork
+            Protect Every Deal. Automatically.
           </h2>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-white/90 font-['Manrope'] max-w-2xl mx-auto mb-10">
-            Let Contre handle the document review while you focus on closing deals and building client relationships.
+            Stop scrolling through 50 pages at 10pm. Contre already did.
           </p>
 
           {/* CTA Button - White version for dark background */}
@@ -59,7 +59,7 @@ export function CTASectionAlt() {
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <span className="relative">
-                    Get Started Free
+                    Upload Your Contract Free
                     <motion.span
                       className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white group-hover:w-full transition-all duration-300"
                       initial={{ width: 0 }}

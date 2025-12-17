@@ -270,25 +270,6 @@ export default function EnhancedBackgroundPaths({
       {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-transparent to-white/60 dark:from-slate-900/60 dark:via-transparent dark:to-slate-900/60" />
 
-      {/* Pattern Indicator */}
-      <div className="absolute top-8 right-8 flex gap-2 z-20">
-        {patterns.map((_, i) => (
-          <motion.div
-            key={i}
-            className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-              i === currentPattern
-                ? 'bg-slate-800 dark:bg-white'
-                : 'bg-slate-300 dark:bg-slate-600'
-            }`}
-            animate={{
-              scale: i === currentPattern ? 1.2 : 1,
-              opacity: i === currentPattern ? 1 : 0.5
-            }}
-            transition={{ duration: 0.3 }}
-          />
-        ))}
-      </div>
-
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
         <motion.div
@@ -335,26 +316,42 @@ export default function EnhancedBackgroundPaths({
               transition={{ delay: 1, duration: 1 }}
               className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 font-light tracking-wide max-w-3xl mx-auto"
             >
-              Custom AI trained on your brokerage's documents catches the critical clauses buried in inspection reports, HOA docs, and title work—before they become E&O claims or unhappy clients.
+              Even the best agents miss things in real estate paperwork. Contre doesn't.
             </motion.p>
+
+            {/* Feature Bullets */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.2, duration: 1 }}
+              className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-slate-600 dark:text-slate-400"
+            >
+              <span>Upload any contract</span>
+              <span className="hidden sm:inline text-slate-400">•</span>
+              <span>AI extracts every deadline</span>
+              <span className="hidden sm:inline text-slate-400">•</span>
+              <span>One page summary for each contract</span>
+            </motion.div>
           </div>
 
-          {/* CTA Button */}
+          {/* CTA Buttons */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 1.5, duration: 0.8, type: "spring", stiffness: 100 }}
-            className="inline-block group"
+            className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
-            <div className="relative p-[2px] bg-gradient-to-r from-[#264E36] via-[#607D3B] to-[#9DBFBF] rounded-2xl group-hover:from-[#1a3624] group-hover:via-[#4a5f2d] group-hover:to-[#7da3a3] transition-all duration-300">
+            {/* Primary CTA */}
+            <div className="inline-block group">
               <Button
                 variant="ghost"
                 size="lg"
-                className="relative rounded-[14px] px-12 py-6 text-lg font-semibold
-                            bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800
-                            text-slate-900 dark:text-white transition-all duration-300
+                className="relative rounded-2xl px-12 py-6 text-lg font-semibold
+                            bg-gradient-to-r from-[#264E36] via-[#607D3B] to-[#4a6b2f]
+                            hover:from-[#1a3624] hover:via-[#4a5f2d] hover:to-[#3d5a28]
+                            text-white transition-all duration-300
                             group-hover:-translate-y-1 group-hover:shadow-2xl
-                            border-0 backdrop-blur-sm"
+                            border-0 shadow-lg"
                 onClick={() => window.open('https://audit.contre.ai', '_blank')}
               >
                 <motion.span
@@ -362,14 +359,7 @@ export default function EnhancedBackgroundPaths({
                   whileHover={{ x: 2 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
-                  <span className="relative">
-                    Try Free Transaction Risk Assessment
-                    <motion.span
-                      className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[#264E36] to-[#607D3B] group-hover:w-full transition-all duration-300"
-                      initial={{ width: 0 }}
-                      whileHover={{ width: "100%" }}
-                    />
-                  </span>
+                  <span>Let's Train Your Purchase Agreement Free</span>
                   <motion.span
                     animate={{ x: [0, 4, 0] }}
                     transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -380,6 +370,22 @@ export default function EnhancedBackgroundPaths({
                 </motion.span>
               </Button>
             </div>
+
+            {/* Secondary CTA */}
+            <button
+              className="text-base font-medium text-slate-500 dark:text-slate-400
+                          hover:text-[#264E36] dark:hover:text-[#9DBFBF]
+                          transition-colors duration-300
+                          underline-offset-4 hover:underline"
+              onClick={() => {
+                const examplesSection = document.getElementById('examples');
+                if (examplesSection) {
+                  examplesSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
+            >
+              See Examples
+            </button>
           </motion.div>
 
           {/* Microcopy */}
@@ -399,7 +405,7 @@ export default function EnhancedBackgroundPaths({
             </span>
             <span className="flex items-center gap-2">
               <span className="text-green-600 dark:text-green-400">✓</span>
-              Trusted by agents + brokers across the U.S.
+              Integrates with SkySlope & Lonewolf
             </span>
           </motion.div>
         </motion.div>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter, Bebas_Neue, Manrope } from 'next/font/google'
+import Script from 'next/script'
 import { defaultMetadata } from '@/lib/metadata'
 import { SimpleHeader } from '@/components/ui/simple-header'
 import './globals.css'
@@ -36,6 +37,19 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" href="/contre-logo.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/contre-logo.png" />
+        <Script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-LH9Q87XMPZ"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LH9Q87XMPZ');
+          `}
+        </Script>
       </head>
       <body 
         className={`${inter.variable} ${bebasNeue.variable} ${manrope.variable} ${inter.className} antialiased`}
