@@ -38,11 +38,18 @@ export default function RootLayout({
         <link rel="icon" href="/contre-logo.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/contre-logo.png" />
         <Script
-          defer
-          src="https://cloud.umami.is/script.js"
-          data-website-id="6b0a37b5-8a1e-4612-adee-e8397ef4f44a"
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-LH9Q87XMPZ"
           strategy="afterInteractive"
         />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-LH9Q87XMPZ');
+          `}
+        </Script>
       </head>
       <body 
         className={`${inter.variable} ${bebasNeue.variable} ${manrope.variable} ${inter.className} antialiased`}
