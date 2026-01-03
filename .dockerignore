@@ -29,13 +29,20 @@ Thumbs.db
 .git
 .gitignore
 
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
 # Documentation
 README.md
+LICENSE
 CHANGELOG.md
 docs
+*.md
 
 # Misc
-*.md
 .editorconfig
 .prettierrc
 .eslintcache
+.turbo
