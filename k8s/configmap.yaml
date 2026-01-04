@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: contre-landing-config
+  labels:
+    app: contre-landing
+    app.kubernetes.io/name: contre-landing
+    app.kubernetes.io/component: config
+data:
+  # Supabase public URL
+  NEXT_PUBLIC_SUPABASE_URL: "https://qhxevepqohogtenqxrka.supabase.co"
+  # Cookie domain - set appropriately for your environment
+  NEXT_PUBLIC_COOKIE_DOMAIN: ""
+  # Node.js environment
+  NODE_ENV: "production"
+  # Disable Next.js telemetry
+  NEXT_TELEMETRY_DISABLED: "1"
