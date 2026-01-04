@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: contre-landing
+  labels:
+    app: contre-landing
+    app.kubernetes.io/name: contre-landing
+    app.kubernetes.io/component: web
+spec:
+  type: ClusterIP
+  selector:
+    app: contre-landing
+  ports:
+    - name: http
+      port: 80
+      targetPort: 5138
+      protocol: TCP
