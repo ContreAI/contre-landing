@@ -20,7 +20,7 @@ coverage
 .DS_Store
 Thumbs.db
 
-# Environment files
+# Environment files (secrets should be passed as build args)
 .env
 .env.*
 !.env.example
@@ -37,8 +37,12 @@ docker-compose*.yml
 # Documentation
 README.md
 LICENSE
+CHANGELOG.md
+docs
 *.md
 
 # Misc
+.editorconfig
+.prettierrc
 .eslintcache
 .turbo
