@@ -23,6 +23,10 @@ env:
   IMAGE_NAME: contreai/contre-landing
   APP_NAME: contre-landing
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   prepare:
     name: Prepare Release
