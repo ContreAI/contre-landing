@@ -2,43 +2,41 @@
 
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { useState, useEffect, useMemo } from "react"
+import { useState } from "react"
+
+// Seeded random number generator for deterministic results
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10000
+  return x - Math.floor(x)
+}
+
+// Pre-generate geometric paths data outside React to avoid purity issues
+function generateGeometricPaths() {
+  const gridSize = 40
+  const result = []
+  let seed = 1
+
+  for (let x = 0; x < 20; x++) {
+    for (let y = 0; y < 12; y++) {
+      if (seededRandom(seed++) > 0.7) {
+        result.push({
+          id: `grid-${x}-${y}`,
+          d: `M${x * gridSize},${y * gridSize} L${(x + 1) * gridSize},${y * gridSize} L${(x + 1) * gridSize},${(y + 1) * gridSize} L${x * gridSize},${(y + 1) * gridSize} Z`,
+          delay: seededRandom(seed++) * 5,
+        })
+      }
+    }
+  }
+  return result
+}
+
+const GEOMETRIC_PATHS = generateGeometricPaths()
 
 // Geometric Grid Paths
 function GeometricPaths() {
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  const paths = useMemo(() => {
-    if (!mounted) return []
-
-    const gridSize = 40
-    const result = []
-
-    for (let x = 0; x < 20; x++) {
-      for (let y = 0; y < 12; y++) {
-        if (Math.random() > 0.7) {
-          result.push({
-            id: `grid-${x}-${y}`,
-            d: `M${x * gridSize},${y * gridSize} L${(x + 1) * gridSize},${y * gridSize} L${(x + 1) * gridSize},${(y + 1) * gridSize} L${x * gridSize},${(y + 1) * gridSize} Z`,
-            delay: Math.random() * 5,
-          })
-        }
-      }
-    }
-    return result
-  }, [mounted])
-
-  if (!mounted) {
-    return null
-  }
-
   return (
     <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 800 480">
-      {paths.map((path) => (
+      {GEOMETRIC_PATHS.map((path) => (
         <motion.path
           key={path.id}
           d={path.d}

@@ -1,8 +1,8 @@
 import type { MDXComponents } from 'mdx/types'
 import Link from 'next/link'
 
-export function useMDXComponents(components: MDXComponents): MDXComponents {
-  return {
+// Static components object for use in server components
+export const mdxComponents: MDXComponents = {
     // Headings with proper styling
     h1: ({ children }) => (
       <h1 className="text-4xl font-bold text-slate-900 mt-8 mb-4 first:mt-0">
@@ -139,6 +139,12 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       </td>
     ),
 
+}
+
+// Hook wrapper for Next.js MDX integration
+export function useMDXComponents(components: MDXComponents): MDXComponents {
+  return {
+    ...mdxComponents,
     ...components,
   }
 }

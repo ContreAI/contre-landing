@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { compileMDX } from 'next-mdx-remote/rsc'
 import { getAllPosts, getPostBySlug, formatDate } from '@/lib/blog'
 import type { BlogMeta } from '@/lib/blog-types'
-import { useMDXComponents } from '../../../../mdx-components'
+import { mdxComponents } from '../../../../mdx-components'
 import Footer from '@/components/ui/footer'
 import { ArticleSchema } from '@/components/seo/ArticleSchema'
 import { ArrowLeft } from 'lucide-react'
@@ -66,10 +66,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     notFound()
   }
 
-  const components = useMDXComponents({})
   const { content } = await compileMDX<BlogMeta>({
     source: post.content,
-    components,
+    components: mdxComponents,
   })
 
   return (
