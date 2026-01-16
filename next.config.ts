@@ -17,6 +17,22 @@ const nextConfig: NextConfig = {
   // Compression
   compress: true,
 
+  // Redirects - send app routes to dev.contre.ai
+  async redirects() {
+    return [
+      {
+        source: '/dashboard/:path*',
+        destination: 'https://dev.contre.ai/dashboard/:path*',
+        permanent: false,
+      },
+      {
+        source: '/dashboard',
+        destination: 'https://dev.contre.ai/dashboard',
+        permanent: false,
+      },
+    ]
+  },
+
   // Security headers
   async headers() {
     return [
