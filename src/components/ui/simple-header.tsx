@@ -43,15 +43,15 @@ export function SimpleHeader() {
 	return (
 		<header className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-50 w-full border-b backdrop-blur-lg">
 			<nav className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between px-6">
-				<Link href="/" className="flex items-center gap-3">
-					<Image 
-						src="/contre-logo.png" 
-						alt="Contre" 
-						width={120} 
-						height={32} 
+				<Link href="/" className="flex items-center gap-2">
+					<Image
+						src="/contre-logo.svg"
+						alt="Contre"
+						width={32}
+						height={32}
 						priority
-						style={{ width: 'auto', height: 'auto' }} 
 					/>
+					<span className="text-[#607d3b] font-['Bebas_Neue'] text-xl tracking-wide leading-none">CONTRE</span>
 				</Link>
 				<div className="hidden items-center gap-2 lg:flex">
 					{links.map((link) => (
