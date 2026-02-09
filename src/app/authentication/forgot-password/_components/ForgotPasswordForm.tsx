@@ -18,14 +18,14 @@ export function ForgotPasswordForm({ isLoading, error, success }: ForgotPassword
       <div className="min-h-screen flex flex-col bg-[#f8f9fa]">
         {/* Logo */}
         <div className="p-8">
-          <Link href="/">
+          <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/contre-logo.png"
+              src="/contre-logo.svg"
               alt="Contre"
-              width={180}
-              height={60}
-              className="h-14 w-auto"
+              width={40}
+              height={40}
             />
+            <span className="text-[#607d3b] font-['Bebas_Neue'] text-2xl tracking-wide leading-none">CONTRE</span>
           </Link>
         </div>
 
@@ -59,14 +59,14 @@ export function ForgotPasswordForm({ isLoading, error, success }: ForgotPassword
     <div className="min-h-screen flex flex-col bg-[#f8f9fa]">
       {/* Logo */}
       <div className="p-8">
-        <Link href="/">
+        <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/contre-logo.png"
+            src="/contre-logo.svg"
             alt="Contre"
-            width={180}
-            height={60}
-            className="h-14 w-auto"
+            width={40}
+            height={40}
           />
+          <span className="text-[#607d3b] font-['Bebas_Neue'] text-2xl tracking-wide leading-none">CONTRE</span>
         </Link>
       </div>
 
