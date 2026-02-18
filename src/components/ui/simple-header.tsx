@@ -3,19 +3,13 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
 import { Sheet, SheetContent, SheetFooter } from '@/components/ui/sheet';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { MenuToggle } from '@/components/ui/menu-toggle';
+import { APP_URL } from '@/lib/config';
 
 export function SimpleHeader() {
 	const [open, setOpen] = React.useState(false);
-	const pathname = usePathname();
-
-	// Hide header on authentication pages
-	if (pathname?.startsWith('/authentication')) {
-		return null;
-	}
 
 	const links = [
 		{
@@ -73,12 +67,12 @@ export function SimpleHeader() {
 							</a>
 						)
 					))}
-					<Link href="/authentication/login">
+					<a href={`${APP_URL}/authentication/login`}>
 						<Button variant="outline" className="font-['Manrope']">Sign In</Button>
-					</Link>
-					<Link href="/authentication/signup">
+					</a>
+					<a href={`${APP_URL}/authentication/signup`}>
 						<Button className="bg-gradient-to-r from-[#264E36] via-[#607D3B] to-[#9DBFBF] hover:from-[#1a3624] hover:via-[#4a5f2d] hover:to-[#7da3a3] font-['Manrope']">Get Started</Button>
-					</Link>
+					</a>
 				</div>
 				<Sheet open={open} onOpenChange={setOpen}>
 					<Button size="icon" variant="outline" className="lg:hidden">
@@ -124,12 +118,12 @@ export function SimpleHeader() {
 							))}
 						</div>
 						<SheetFooter>
-							<Link href="/authentication/login">
+							<a href={`${APP_URL}/authentication/login`}>
 								<Button variant="outline" className="font-['Manrope']">Sign In</Button>
-							</Link>
-							<Link href="/authentication/signup">
+							</a>
+							<a href={`${APP_URL}/authentication/signup`}>
 								<Button className="bg-gradient-to-r from-[#264E36] via-[#607D3B] to-[#9DBFBF] hover:from-[#1a3624] hover:via-[#4a5f2d] hover:to-[#7da3a3] font-['Manrope']">Get Started</Button>
-							</Link>
+							</a>
 						</SheetFooter>
 					</SheetContent>
 				</Sheet>

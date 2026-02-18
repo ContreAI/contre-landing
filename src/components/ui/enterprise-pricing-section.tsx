@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useState, useMemo } from "react"
 import { Building2, Users, Mail, MapPin, User, Calculator } from "lucide-react"
-import Link from "next/link"
+import { APP_URL } from "@/lib/config"
 
 interface PricingTier {
   maxDeals: number
@@ -331,7 +331,7 @@ export function EnterprisePricingSection() {
               </AnimatePresence>
 
               {/* CTA Button */}
-              <Link href="/authentication/signup" className="block mt-auto">
+              <a href={`${APP_URL}/authentication/signup`} className="block mt-auto">
                 <Button
                   variant="ghost"
                   size="lg"
@@ -353,7 +353,7 @@ export function EnterprisePricingSection() {
                     </motion.span>
                   </motion.span>
                 </Button>
-              </Link>
+              </a>
             </div>
 
             {/* Pricing Tiers Quick Reference */}

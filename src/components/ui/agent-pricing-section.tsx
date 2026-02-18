@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Check, Star } from "lucide-react"
-import Link from "next/link"
+import { APP_URL } from "@/lib/config"
 
 interface PricingTier {
   name: string
@@ -154,7 +154,7 @@ export function AgentPricingSection() {
                 </ul>
 
                 {/* CTA Button */}
-                <Link href="/authentication/signup" className="block">
+                <a href={`${APP_URL}/authentication/signup`} className="block">
                   <Button
                     variant="ghost"
                     size="lg"
@@ -179,7 +179,7 @@ export function AgentPricingSection() {
                       </motion.span>
                     </motion.span>
                   </Button>
-                </Link>
+                </a>
               </div>
             </motion.div>
           ))}
