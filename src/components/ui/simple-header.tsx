@@ -6,8 +6,7 @@ import Image from 'next/image';
 import { Sheet, SheetContent, SheetFooter } from '@/components/ui/sheet';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { MenuToggle } from '@/components/ui/menu-toggle';
-
-const APP_URL = 'https://dev.contre.ai';
+import { APP_URL } from '@/lib/config';
 
 export function SimpleHeader() {
 	const [open, setOpen] = React.useState(false);

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
+import { APP_URL } from "@/lib/config"
 
 export function AssessmentCTABrokerages() {
   const benefits = [
@@ -88,7 +89,7 @@ export function AssessmentCTABrokerages() {
                             text-[#264E36] transition-all duration-300
                             group-hover:-translate-y-1 group-hover:shadow-2xl
                             border-0 shadow-lg font-['Manrope']"
-                onClick={() => window.open('https://dev.contre.ai', '_blank')}
+                onClick={() => window.open(APP_URL, '_blank')}
               >
                 <motion.span
                   className="flex items-center gap-3"

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useState, useMemo } from "react"
 import { Building2, Users, Mail, MapPin, User, Calculator } from "lucide-react"
-const APP_URL = 'https://dev.contre.ai'
+import { APP_URL } from "@/lib/config"
 
 interface PricingTier {
   maxDeals: number
