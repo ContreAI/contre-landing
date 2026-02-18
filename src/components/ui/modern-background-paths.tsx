@@ -360,7 +360,7 @@ export default function EnhancedBackgroundPaths({
                             text-white transition-all duration-300
                             group-hover:-translate-y-1 group-hover:shadow-2xl
                             border-0 shadow-lg"
-                onClick={() => window.open('https://audit.contre.ai', '_blank')}
+                onClick={() => window.open('https://dev.contre.ai', '_blank')}
               >
                 <motion.span
                   className="flex items-center gap-3"

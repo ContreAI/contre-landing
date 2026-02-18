@@ -71,7 +71,7 @@ export function CTASectionBrokerages() {
                             text-slate-900 transition-all duration-300
                             group-hover:-translate-y-1 group-hover:shadow-2xl
                             border-0 backdrop-blur-sm font-['Manrope']"
-                onClick={() => window.open('https://audit.contre.ai', '_blank')}
+                onClick={() => window.open('https://dev.contre.ai', '_blank')}
               >
                 <motion.span
                   className="flex items-center gap-3"
