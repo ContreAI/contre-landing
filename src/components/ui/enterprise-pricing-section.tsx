@@ -7,6 +7,7 @@ import { APP_URL } from "@/lib/config"
 import Image from "next/image"
 import { AmbientGlow } from "@/components/ui/ambient-glow"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
+import { trackGenerateLead } from "@/lib/gtag"
 
 interface PricingTier {
   maxDeals: number
@@ -70,6 +71,7 @@ export function EnterprisePricingSection() {
         }),
       })
       if (!res.ok) throw new Error("Failed to send")
+      trackGenerateLead('brokerage_quote_form')
       setSubmitState("success")
     } catch {
       setSubmitState("error")

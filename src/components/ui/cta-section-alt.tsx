@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { AmbientGlow } from "@/components/ui/ambient-glow"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 import { APP_URL } from "@/lib/config"
+import { trackCTAClick } from "@/lib/gtag"
 
 export function CTASectionAlt() {
   const prefersReduced = useReducedMotion();
@@ -49,7 +50,7 @@ export function CTASectionAlt() {
                           text-[#0D1A14] transition-all duration-200
                           group-hover:-translate-y-1 shadow-soft-lg group-hover:shadow-[0_12px_48px_rgba(255,255,255,0.2)]
                           border-0 font-['Manrope']"
-              onClick={() => window.open(`${APP_URL}/authentication/signup`, '_blank')}
+              onClick={() => { trackCTAClick('Upload Your Contract Free'); window.open(`${APP_URL}/authentication/signup`, '_blank') }}
             >
               <motion.span
                 className="flex items-center gap-3"

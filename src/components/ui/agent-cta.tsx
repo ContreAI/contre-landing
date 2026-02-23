@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { AmbientGlow } from "@/components/ui/ambient-glow"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 import { APP_URL } from "@/lib/config"
+import { trackCTAClick } from "@/lib/gtag"
 
 const benefits = [
   "Full transaction summary with every deadline extracted",
@@ -78,7 +79,7 @@ export function AgentCTA() {
                         text-[#264E36] transition-all duration-200
                         group-hover:-translate-y-1 group-hover:shadow-[0_12px_48px_rgba(255,255,255,0.2)]
                         border-0 shadow-lg font-['Manrope']"
-            onClick={() => window.open(`${APP_URL}/authentication/signup`, '_blank')}
+            onClick={() => { trackCTAClick('Upload Your First Contract'); window.open(`${APP_URL}/authentication/signup`, '_blank') }}
           >
             <motion.span
               className="flex items-center gap-3"

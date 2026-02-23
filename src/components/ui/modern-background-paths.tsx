@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { APP_URL } from "@/lib/config"
+import { trackCTAClick } from "@/lib/gtag"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 
 // Seeded random number generator for deterministic results
@@ -367,7 +368,7 @@ export default function EnhancedBackgroundPaths({
                             text-white transition-all duration-300
                             group-hover:-translate-y-1 group-hover:shadow-2xl
                             border-0 shadow-lg"
-                onClick={() => window.open(APP_URL, '_blank')}
+                onClick={() => { trackCTAClick('Train Your Purchase Agreement Free'); window.open(APP_URL, '_blank') }}
               >
                 <motion.span
                   className="flex items-center gap-3"

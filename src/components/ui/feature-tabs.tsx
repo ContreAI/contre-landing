@@ -9,6 +9,7 @@ import { AmbientGlow } from "@/components/ui/ambient-glow";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { motion } from "framer-motion";
 import { APP_URL } from "@/lib/config";
+import { trackCTAClick } from "@/lib/gtag";
 
 interface TabContent {
   badge: string;
@@ -152,7 +153,7 @@ const FeatureTabs = ({
                                 hover:-translate-y-0.5 shadow-soft-lg
                                 hover:shadow-[0_8px_32px_rgba(255,255,255,0.2)]
                                 border-0 font-manrope"
-                    onClick={() => window.open(`${APP_URL}/authentication/signup`, '_blank')}
+                    onClick={() => { trackCTAClick(tab.content.buttonText); window.open(`${APP_URL}/authentication/signup`, '_blank') }}
                   >
                     {tab.content.buttonText}
                   </Button>

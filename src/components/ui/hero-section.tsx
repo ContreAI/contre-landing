@@ -8,6 +8,7 @@ import { AmbientGlow } from "@/components/ui/ambient-glow"
 import { DottedSurface } from "@/components/ui/dotted-surface"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 import { APP_URL } from "@/lib/config"
+import { trackCTAClick } from "@/lib/gtag"
 
 function AnimatedCounter({ target, duration = 1.5, delay = 0, prefersReduced = false }: { target: number; duration?: number; delay?: number; prefersReduced?: boolean }) {
   const count = useMotionValue(prefersReduced ? target : 0)
@@ -91,7 +92,7 @@ export function HeroSection() {
                               text-[#0D1A14] transition-all duration-200
                               group-hover:-translate-y-1 group-hover:shadow-[0_8px_32px_rgba(255,255,255,0.2)]
                               border-0 shadow-lg font-['Manrope']"
-                  onClick={() => window.open(`${APP_URL}/authentication/signup`, '_blank')}
+                  onClick={() => { trackCTAClick('Analyze Your First Contract'); window.open(`${APP_URL}/authentication/signup`, '_blank') }}
                 >
                   <motion.span
                     className="flex items-center gap-3"

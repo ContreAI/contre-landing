@@ -7,6 +7,7 @@ import { useEffect } from "react"
 import { AmbientGlow } from "@/components/ui/ambient-glow"
 import { useReducedMotion } from "@/hooks/use-reduced-motion"
 import { APP_URL } from "@/lib/config"
+import { trackCTAClick } from "@/lib/gtag"
 
 function AnimatedCounter({ target, duration = 1.5, delay = 0, prefersReduced = false }: { target: number; duration?: number; delay?: number; prefersReduced?: boolean }) {
   const count = useMotionValue(prefersReduced ? target : 0)
@@ -80,7 +81,7 @@ export function BrokerageHero() {
                               text-white transition-all duration-200
                               group-hover:-translate-y-1 group-hover:shadow-[0_8px_32px_rgba(38,78,54,0.3)]
                               border-0 shadow-lg font-['Manrope']"
-                  onClick={() => window.open(`${APP_URL}/authentication/signup`, '_blank')}
+                  onClick={() => { trackCTAClick('Start Training Your Docs'); window.open(`${APP_URL}/authentication/signup`, '_blank') }}
                 >
                   <motion.span
                     className="flex items-center gap-3"
