@@ -1,9 +1,8 @@
 "use client";
 import {
   Mail,
-  MapPin,
   Facebook,
-  Instagram,
+  Linkedin,
 } from "lucide-react";
 import Link from "next/link";
 import {FooterBackgroundGradient} from "@/components/ui/hover-footer";
@@ -15,9 +14,7 @@ function Footer() {
     {
       title: "Product",
       links: [
-        { label: "Features", href: "#features" },
         { label: "Pricing", href: "/pricing", isRoute: true },
-        { label: "Integrations", href: "#integrations" },
       ],
     },
     {
@@ -25,7 +22,6 @@ function Footer() {
       links: [
         { label: "For Agents", href: "/agents", isRoute: true },
         { label: "For Brokerages", href: "/brokerages", isRoute: true },
-        { label: "Enterprise", href: "#enterprise" },
       ],
     },
     {
@@ -49,30 +45,26 @@ function Footer() {
   // Contact info data
   const contactInfo = [
     {
-      icon: <Mail size={18} className="text-[#9DBFBF]" />,
+      icon: <Mail size={18} className="text-[#9DBFBF]" aria-hidden="true" />,
       text: "ct@contre.ai",
       href: "mailto:ct@contre.ai",
-    },
-    {
-      icon: <MapPin size={18} className="text-[#9DBFBF]" />,
-      text: "Coeur d'Alene, ID",
     },
   ];
 
   // Social media icons
   const socialLinks = [
-    { icon: <Facebook size={20} />, label: "Facebook", href: "#" },
-    { icon: <Instagram size={20} />, label: "Instagram", href: "#" },
+    { icon: <Facebook size={20} aria-hidden="true" />, label: "Facebook", href: "https://www.facebook.com/profile.php?id=61580148100130" },
+    { icon: <Linkedin size={20} aria-hidden="true" />, label: "LinkedIn", href: "https://www.linkedin.com/company/contre-ai/" },
   ];
 
   return (
-    <footer className="bg-[#37474F] relative h-fit rounded-3xl overflow-hidden m-8 text-gray-300 font-['Manrope']">
+    <footer className="bg-gradient-to-b from-[#0D1A14] to-[#112A1E] relative h-fit overflow-hidden border-t border-white/[0.08] text-slate-400 font-manrope">
       <div className="max-w-7xl mx-auto p-14 z-40 relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 md:gap-8 lg:gap-12 pb-12">
           {/* Brand section */}
           <div className="flex flex-col space-y-4">
             <div className="flex items-center space-x-2">
-              <span className="text-[#607D3B] text-3xl font-bold font-['Bebas_Neue']">
+              <span className="text-[#9DBFBF] text-3xl font-bold font-bebas">
                 Contre
               </span>
             </div>
@@ -88,12 +80,12 @@ function Footer() {
                   {item.href ? (
                     <a
                       href={item.href}
-                      className="hover:text-[#3ca2fa] transition-colors"
+                      className="hover:text-[#9DBFBF] transition-colors"
                     >
                       {item.text}
                     </a>
                   ) : (
-                    <span className="hover:text-[#3ca2fa] transition-colors">
+                    <span className="hover:text-[#9DBFBF] transition-colors">
                       {item.text}
                     </span>
                   )}
@@ -105,7 +97,7 @@ function Footer() {
           {/* Footer link sections */}
           {footerLinks.map((section) => (
             <div key={section.title}>
-              <h4 className="text-white text-lg font-bold mb-6 font-['Bebas_Neue'] tracking-wide">
+              <h4 className="text-white text-lg font-bold mb-6 font-bebas tracking-wide">
                 {section.title}
               </h4>
               <ul className="space-y-3">
@@ -114,14 +106,14 @@ function Footer() {
                     {link.isRoute ? (
                       <Link
                         href={link.href}
-                        className="hover:text-[#3ca2fa] transition-colors"
+                        className="hover:text-[#9DBFBF] hover:translate-x-1 transition-all duration-200 inline-block"
                       >
                         {link.label}
                       </Link>
                     ) : (
                       <a
                         href={link.href}
-                        className="hover:text-[#3ca2fa] transition-colors"
+                        className="hover:text-[#9DBFBF] hover:translate-x-1 transition-all duration-200 inline-block"
                       >
                         {link.label}
                       </a>
@@ -133,18 +125,18 @@ function Footer() {
           ))}
         </div>
 
-        <hr className="border-t border-gray-600 my-8" />
+        <hr className="border-t border-white/[0.08] my-8" />
 
         {/* Footer bottom */}
         <div className="flex flex-col md:flex-row justify-between items-center text-sm space-y-4 md:space-y-0">
           {/* Social icons */}
-          <div className="flex space-x-6 text-gray-400">
+          <div className="flex space-x-6 text-slate-500">
             {socialLinks.map(({ icon, label, href }) => (
               <a
                 key={label}
                 href={href}
                 aria-label={label}
-                className="hover:text-[#3ca2fa] transition-colors"
+                className="hover:text-[#9DBFBF] hover:scale-110 transition-all duration-200"
               >
                 {icon}
               </a>

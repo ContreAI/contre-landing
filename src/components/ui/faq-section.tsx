@@ -6,9 +6,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronDown } from "lucide-react";
+import { AmbientGlow } from "@/components/ui/ambient-glow";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { motion } from "framer-motion";
 
-const items = [
+const defaultItems = [
   {
     id: "1",
     title: "How accurate is the AI? What if it misses something?",
@@ -35,81 +37,65 @@ const items = [
   },
   {
     id: "5",
-    title: "How do I get my agents to actually use this?",
-    content:
-      "Transaction coordinators upload documents and tag agents—the system works whether agents engage or not. Agents get automated alerts, but adoption isn't required for protection. Once they see the client chatbot and reports, they adopt fast.",
-  },
-  {
-    id: "6",
-    title: "What's the ROI for a brokerage our size?",
-    content:
-      "For a 30-agent brokerage doing 150 transactions annually: preventing just 2-3 failed deals ($7,500 commission each) pays for the entire year. Most brokerages see ROI within the first quarter.",
-  },
-  {
-    id: "7",
     title: "Can you integrate with our SkySlope/LoneWolf system?",
     content:
       "Yes. Direct integrations with both platforms sync transaction data automatically. No duplicate data entry, no workflow changes. Documents flow directly into Contre for analysis.",
   },
   {
-    id: "8",
-    title: "How does custom training work? What if our forms change?",
-    content:
-      "Upload 10-20 examples of well-executed contracts and your specific addendums. Our AI learns your standards. When forms change, upload new examples and we retrain in 48 hours.",
-  },
-  {
-    id: "9",
+    id: "6",
     title: "How much time does this actually save me per transaction?",
     content:
       "Agents report saving 2-5 hours per deal on document review and client questions. The bigger win? Zero late-night texts because clients have 24/7 chatbot access.",
   },
-  {
-    id: "10",
-    title: "Can my clients tell I'm using AI, or does it look like I did all this work?",
-    content:
-      "Clients see branded reports with YOUR name/logo and a professional chatbot interface. They just think you're the most organized agent they've ever worked with.",
-  },
-  {
-    id: "11",
-    title: "What if I'm at a brokerage that doesn't use Contre?",
-    content:
-      "Individual agents can sign up for themselves. If your brokerage adopts it later, your account seamlessly converts to the company system.",
-  },
 ];
 
-export function FAQSection() {
+interface FAQSectionProps {
+  items?: { id: string; title: string; content: string }[];
+}
+
+export function FAQSection({ items = defaultItems }: FAQSectionProps) {
+  const prefersReduced = useReducedMotion();
   return (
-    <section className="py-24 md:py-32 bg-white">
-      <div className="w-full max-w-4xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-7xl font-semibold font-['Bebas_Neue'] text-[#37474F] mb-6">
+    <section className="relative py-24 md:py-32 bg-gradient-to-b from-[#112A1E] via-[#0D1A14] to-[#112A1E] overflow-hidden">
+      {/* Top decorative line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#9DBFBF]/10 to-transparent" />
+      <AmbientGlow color="#9DBFBF" position="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" opacity="opacity-[0.08]" size="w-[700px] h-[700px]" />
+      <AmbientGlow color="#264E36" position="top-[-100px] left-[-100px]" opacity="opacity-[0.10]" size="w-[400px] h-[400px]" />
+      <div className="relative z-10 w-full max-w-4xl mx-auto px-6">
+        <motion.div
+          className="text-center mb-16"
+          initial={prefersReduced ? undefined : { opacity: 0, y: 24 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 0.6 }}
+        >
+          <h2 className="text-5xl md:text-7xl font-semibold font-bebas text-white mb-6 tracking-wide">
             Frequently Asked Questions
           </h2>
-          <p className="text-lg md:text-xl text-slate-600 font-['Manrope']">
+          <p className="text-lg md:text-xl text-slate-400 font-manrope">
             Everything you need to know about Contre
           </p>
-        </div>
+        </motion.div>
 
         <Accordion type="single" collapsible className="w-full">
           {items.map((item) => (
             <AccordionItem
               value={item.id}
               key={item.id}
-              className="border-slate-200 last:border-b"
+              className="border-white/[0.08] last:border-b hover:bg-white/[0.02] transition-colors duration-300"
             >
-              <AccordionTrigger className="text-left hover:no-underline group">
+              <AccordionTrigger className="text-left hover:no-underline group [&>svg]:text-[#9DBFBF] [&>svg]:h-5 [&>svg]:w-5 [&>svg]:group-hover:text-[#b3d0d0]">
                 <div className="flex items-center gap-4 w-full">
-                  <span className="text-sm font-semibold text-[#264E36] font-['Manrope'] min-w-[24px]">
+                  <span className="text-sm font-semibold text-[#9DBFBF] font-manrope min-w-[24px]">
                     {item.id.padStart(2, '0')}
                   </span>
-                  <h3 className="text-2xl md:text-3xl font-semibold font-['Bebas_Neue'] text-[#37474F] group-hover:text-[#264E36] transition-colors flex-1">
+                  <h3 className="text-2xl md:text-3xl font-semibold font-bebas text-white group-hover:text-[#9DBFBF] transition-colors flex-1">
                     {item.title}
                   </h3>
-                  <ChevronDown className="h-5 w-5 shrink-0 text-[#264E36] transition-transform duration-200" />
                 </div>
               </AccordionTrigger>
 
-              <AccordionContent className="text-slate-600 font-['Manrope'] text-base md:text-lg leading-relaxed pl-12 pr-4 pb-6">
+              <AccordionContent className="text-slate-400 font-manrope text-base md:text-lg leading-relaxed pl-12 pr-4 pb-6">
                 {item.content}
               </AccordionContent>
             </AccordionItem>

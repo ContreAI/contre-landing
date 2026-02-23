@@ -5,6 +5,10 @@ import { MessageCircle, FileText, ShieldAlert } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { AmbientGlow } from "@/components/ui/ambient-glow";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { motion } from "framer-motion";
+import { APP_URL } from "@/lib/config";
 
 interface TabContent {
   badge: string;
@@ -36,7 +40,7 @@ const FeatureTabs = ({
   tabs = [
     {
       value: "tab-1",
-      icon: <MessageCircle className="h-auto w-4 shrink-0" />,
+      icon: <MessageCircle className="h-auto w-4 shrink-0" aria-hidden="true" />,
       label: "24/7 Client Access",
       content: {
         badge: "Client Communication",
@@ -51,7 +55,7 @@ const FeatureTabs = ({
     },
     {
       value: "tab-2",
-      icon: <FileText className="h-auto w-4 shrink-0" />,
+      icon: <FileText className="h-auto w-4 shrink-0" aria-hidden="true" />,
       label: "Professional Reports",
       content: {
         badge: "Client Deliverables",
@@ -66,7 +70,7 @@ const FeatureTabs = ({
     },
     {
       value: "tab-3",
-      icon: <ShieldAlert className="h-auto w-4 shrink-0" />,
+      icon: <ShieldAlert className="h-auto w-4 shrink-0" aria-hidden="true" />,
       label: "Proactive Protection",
       content: {
         badge: "Behind The Scenes",
@@ -81,34 +85,46 @@ const FeatureTabs = ({
     },
   ],
 }: FeatureTabsProps) => {
+  const prefersReduced = useReducedMotion();
   return (
-    <section className="py-24 md:py-32 bg-white">
-      <div className="container mx-auto px-6">
-        <div className="flex flex-col items-center gap-4 text-center">
+    <section className="relative py-24 md:py-32 bg-gradient-to-b from-[#0D1A14] via-[#112A1E] to-[#112A1E] overflow-hidden">
+      {/* Top decorative line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#607D3B]/12 to-transparent" />
+      <AmbientGlow color="#264E36" position="top-[-200px] right-[-100px]" opacity="opacity-[0.16]" size="w-[700px] h-[700px]" />
+      <AmbientGlow color="#9DBFBF" position="bottom-[-150px] left-[-100px]" opacity="opacity-[0.12]" size="w-[500px] h-[500px]" />
+      <AmbientGlow color="#607D3B" position="top-[30%] left-[50%] -translate-x-1/2" opacity="opacity-[0.06]" size="w-[600px] h-[300px]" />
+      <div className="relative z-10 container mx-auto px-6">
+        <motion.div
+          className="flex flex-col items-center gap-4 text-center"
+          initial={prefersReduced ? undefined : { opacity: 0, y: 24 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 0.6 }}
+        >
           <Badge
             variant="outline"
-            className="font-['Manrope'] text-[#264E36] border-[#264E36]/20"
+            className="font-manrope text-[#9DBFBF] border-[#9DBFBF]/20 bg-white/[0.05]"
           >
             {badge}
           </Badge>
-          <h2 className="max-w-2xl text-5xl md:text-7xl font-semibold font-['Bebas_Neue'] text-[#37474F]">
+          <h2 className="max-w-2xl text-5xl md:text-7xl font-semibold font-bebas text-white tracking-wide">
             {heading}
           </h2>
-          <p className="text-lg md:text-xl text-slate-600 font-['Manrope']">{description}</p>
-        </div>
+          <p className="text-lg md:text-xl text-slate-400 font-manrope">{description}</p>
+        </motion.div>
         <Tabs defaultValue={tabs[0].value} className="mt-8">
           <TabsList className="container flex flex-col items-center justify-center gap-4 sm:flex-row md:gap-10 bg-transparent h-auto p-0">
             {tabs.map((tab) => (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
-                className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold font-['Manrope'] text-slate-600 data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#264E36]/10 data-[state=active]:to-[#607D3B]/10 data-[state=active]:text-[#264E36] transition-all duration-300"
+                className="flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-semibold font-manrope text-slate-400 hover:text-slate-200 hover:bg-white/[0.05] data-[state=active]:bg-white/[0.10] data-[state=active]:text-[#9DBFBF] data-[state=active]:border data-[state=active]:border-[#9DBFBF]/[0.15] data-[state=active]:shadow-[0_0_12px_rgba(157,191,191,0.08)] transition-all duration-300"
               >
                 {tab.icon} {tab.label}
               </TabsTrigger>
             ))}
           </TabsList>
-          <div className="mx-auto mt-8 max-w-screen-xl rounded-2xl bg-slate-50 p-6 lg:p-16 border border-slate-200">
+          <div className="mx-auto mt-8 max-w-screen-xl rounded-2xl glass-card p-6 lg:p-16">
             {tabs.map((tab) => (
               <TabsContent
                 key={tab.value}
@@ -118,23 +134,25 @@ const FeatureTabs = ({
                 <div className="flex flex-col gap-5">
                   <Badge
                     variant="outline"
-                    className="w-fit bg-white font-['Manrope'] text-[#264E36] border-[#264E36]/20"
+                    className="w-fit bg-white/[0.05] font-manrope text-[#9DBFBF] border-[#9DBFBF]/20"
                   >
                     {tab.content.badge}
                   </Badge>
-                  <h3 className="text-3xl font-semibold lg:text-5xl font-['Bebas_Neue'] text-[#37474F]">
+                  <h3 className="text-3xl font-semibold lg:text-5xl font-bebas text-white tracking-wide">
                     {tab.content.title}
                   </h3>
-                  <p className="text-slate-600 lg:text-lg font-['Manrope']">
+                  <p className="text-slate-400 lg:text-lg font-manrope">
                     {tab.content.description}
                   </p>
                   <Button
                     size="lg"
                     className="mt-2.5 w-fit rounded-xl px-8 py-6 text-base font-semibold
-                                bg-gradient-to-r from-[#264E36] to-[#607D3B] hover:from-[#1a3624] hover:to-[#4a5f2d]
-                                text-white transition-all duration-300
-                                hover:-translate-y-0.5 hover:shadow-xl
-                                border-0 font-['Manrope']"
+                                bg-white hover:bg-gray-100
+                                text-[#0D1A14] transition-all duration-200
+                                hover:-translate-y-0.5 shadow-soft-lg
+                                hover:shadow-[0_8px_32px_rgba(255,255,255,0.2)]
+                                border-0 font-manrope"
+                    onClick={() => window.open(`${APP_URL}/authentication/signup`, '_blank')}
                   >
                     {tab.content.buttonText}
                   </Button>
@@ -142,7 +160,7 @@ const FeatureTabs = ({
                 <img
                   src={tab.content.imageSrc}
                   alt={tab.content.imageAlt}
-                  className="rounded-xl shadow-lg w-full h-auto object-cover"
+                  className="rounded-xl shadow-soft-lg w-full h-auto object-cover border border-white/[0.08]"
                 />
               </TabsContent>
             ))}

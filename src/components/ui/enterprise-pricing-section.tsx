@@ -1,10 +1,12 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/button"
 import { useState, useMemo } from "react"
-import { Building2, Users, Mail, MapPin, User, Calculator } from "lucide-react"
+import { Building2, Mail, User, Calculator, Send, CheckCircle, AlertCircle, Users, ArrowRight, Zap } from "lucide-react"
 import { APP_URL } from "@/lib/config"
+import Image from "next/image"
+import { AmbientGlow } from "@/components/ui/ambient-glow"
+import { useReducedMotion } from "@/hooks/use-reduced-motion"
 
 interface PricingTier {
   maxDeals: number
@@ -20,222 +22,189 @@ const pricingTiers: PricingTier[] = [
   { maxDeals: 100, pricePerDeal: 20, monthlyTotal: 2000, overageRate: 15, label: "Professional" },
 ]
 
-// Slider positions map to these values
-const sliderValues = [1, 20, 50, 100, 120] // 120 represents "100+"
+type VolumeOption = "20" | "50" | "100" | "custom"
+
+const volumeOptions: { value: VolumeOption; label: string; sublabel: string }[] = [
+  { value: "20", label: "Up to 20", sublabel: "deals/mo" },
+  { value: "50", label: "Up to 50", sublabel: "deals/mo" },
+  { value: "100", label: "Up to 100", sublabel: "deals/mo" },
+  { value: "custom", label: "100+", sublabel: "custom" },
+]
 
 export function EnterprisePricingSection() {
-  const [sliderPosition, setSliderPosition] = useState(1) // 0-4, default to 20 (position 1)
-  const [agentCount, setAgentCount] = useState("")
+  const prefersReduced = useReducedMotion()
+  const [selectedVolume, setSelectedVolume] = useState<VolumeOption>("20")
   const [brokerageName, setBrokerageName] = useState("")
   const [contactName, setContactName] = useState("")
   const [email, setEmail] = useState("")
-  const [location, setLocation] = useState("")
-
-  const transactionVolume = sliderValues[sliderPosition]
+  const [submitState, setSubmitState] = useState<"idle" | "loading" | "success" | "error">("idle")
 
   const currentTier = useMemo(() => {
-    if (transactionVolume > 100) return null // Custom pricing
-    if (transactionVolume <= 20) return pricingTiers[0]
-    if (transactionVolume <= 50) return pricingTiers[1]
+    if (selectedVolume === "custom") return null
+    const vol = Number(selectedVolume)
+    if (vol <= 20) return pricingTiers[0]
+    if (vol <= 50) return pricingTiers[1]
     return pricingTiers[2]
-  }, [transactionVolume])
+  }, [selectedVolume])
 
-  const isCustomPricing = transactionVolume > 100
+  const isCustomPricing = selectedVolume === "custom"
+
+  const inputClasses = `w-full px-4 py-3 rounded-xl bg-white/[0.05] border border-white/[0.10] font-['Manrope'] text-white placeholder:text-slate-500
+    focus:outline-none focus:ring-2 focus:ring-[#9DBFBF]/30 focus:border-[#9DBFBF]/40
+    transition-all duration-200`
+
+  const canSubmit = contactName.trim() && email.trim() && brokerageName.trim() && submitState !== "loading"
+
+  async function handleSubmit() {
+    if (!canSubmit) return
+    setSubmitState("loading")
+    try {
+      const res = await fetch("/api/quote-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          transactionVolume: selectedVolume,
+          brokerageName,
+          contactName,
+          email,
+        }),
+      })
+      if (!res.ok) throw new Error("Failed to send")
+      setSubmitState("success")
+    } catch {
+      setSubmitState("error")
+    }
+  }
 
   return (
-    <section className="py-24 md:py-32 bg-gradient-to-br from-slate-50 via-[#9DBFBF]/10 to-slate-100">
-      <div className="container mx-auto px-6 max-w-7xl">
+    <section className="relative py-24 md:py-32 bg-gradient-to-b from-[#131313] via-[#161616] to-[#131313] overflow-hidden">
+      {/* Top decorative line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+      <AmbientGlow color="#9DBFBF" position="top-[-200px] left-[-150px]" opacity="opacity-[0.05]" size="w-[500px] h-[500px]" />
+      <AmbientGlow color="#264E36" position="bottom-[-150px] right-[-100px]" opacity="opacity-[0.06]" size="w-[400px] h-[400px]" />
+
+      <div className="relative z-10 container mx-auto px-6 max-w-7xl">
         {/* Section Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-7xl font-semibold font-['Bebas_Neue'] text-[#264E36] mb-4">
+          <h2 className="text-5xl md:text-7xl font-semibold font-['Bebas_Neue'] text-white mb-4 tracking-wide">
             For Brokerages & Teams
           </h2>
-          <p className="text-lg md:text-xl text-slate-600 font-['Manrope'] max-w-2xl mx-auto">
-            Volume-based pricing that scales with your business. The more you do, the more you save.
+          <p className="text-lg md:text-xl text-slate-400 font-['Manrope'] max-w-2xl mx-auto">
+            Volume-based pricing that scales with your business. The more you do, the more you save. Start with 2 free transactions.
           </p>
+        </motion.div>
+
+        {/* API Integration — Zero Adoption Block */}
+        <motion.div
+          initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 0.6, delay: 0.1 }}
+          className="max-w-6xl mx-auto mb-14"
+        >
+          <div className="bg-white/[0.03] backdrop-blur-md rounded-2xl border border-white/[0.08] p-8 md:p-10">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              {/* Left — message */}
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <Zap className="w-5 h-5 text-[#9DBFBF]" />
+                  <h3 className="text-2xl md:text-3xl font-semibold font-['Bebas_Neue'] text-white tracking-wide">
+                    Zero Agent Adoption Required
+                  </h3>
+                </div>
+                <p className="text-slate-400 font-['Manrope'] text-sm md:text-base leading-relaxed mb-4">
+                  Contre integrates directly with your existing transaction management system via API.
+                  When documents hit SkySlope or Lone Wolf, we automatically analyze them and email
+                  the reports — your agents don&apos;t need to learn anything new or change their workflow.
+                </p>
+                <p className="text-xs text-slate-500 font-['Manrope'] uppercase tracking-widest font-semibold">
+                  Official API Integration Partners
+                </p>
+              </div>
+
+              {/* Right — logos */}
+              <div className="flex flex-col items-center gap-5 flex-shrink-0">
+                <div className="flex items-center gap-6 md:gap-8">
+                  <Image
+                    src="/skyslope-logo.png"
+                    alt="SkySlope"
+                    width={140}
+                    height={35}
+                    className="h-7 md:h-8 w-auto brightness-0 invert opacity-70"
+                  />
+                  <Image
+                    src="/API Integration Badge.png"
+                    alt="Official API Integration Partner"
+                    width={60}
+                    height={75}
+                    className="h-14 md:h-16 w-auto drop-shadow-lg"
+                  />
+                  <Image
+                    src="/LW logo.png"
+                    alt="Lone Wolf"
+                    width={140}
+                    height={35}
+                    className="h-6 md:h-7 w-auto brightness-0 invert opacity-70"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Volume Selector — segmented buttons */}
+        <motion.div
+          initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 0.6, delay: 0.1 }}
+          className="flex justify-center mb-12"
+        >
+          <div className="inline-flex rounded-xl bg-white/[0.03] border border-white/[0.08] p-1.5 gap-1.5">
+            {volumeOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setSelectedVolume(option.value)}
+                className={`px-5 py-3 rounded-lg text-center transition-all duration-300 cursor-pointer min-w-[100px]
+                  ${selectedVolume === option.value
+                    ? "bg-gradient-to-r from-[#264E36] to-[#607D3B] text-white shadow-lg"
+                    : "text-slate-400 hover:text-white hover:bg-white/[0.06]"
+                  }`}
+              >
+                <p className="text-sm font-semibold font-['Manrope']">{option.label}</p>
+                <p className="text-xs font-['Manrope'] opacity-70">{option.sublabel}</p>
+              </button>
+            ))}
+          </div>
         </motion.div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          {/* Left: Quiz Form */}
+          {/* Left: Dynamic Pricing Display */}
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            initial={prefersReduced ? undefined : { opacity: 0, x: -30 }}
+            whileInView={prefersReduced ? undefined : { opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-white rounded-3xl p-8 shadow-xl border border-slate-200"
-          >
-            <h3 className="text-2xl font-semibold font-['Bebas_Neue'] text-[#37474F] mb-6 flex items-center gap-3">
-              <Calculator className="w-6 h-6 text-[#607D3B]" />
-              Get Your Custom Quote
-            </h3>
-
-            {/* Transaction Volume Slider */}
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-slate-700 font-['Manrope'] mb-3">
-                Monthly Transaction Volume
-              </label>
-              <div className="relative">
-                <input
-                  type="range"
-                  min="0"
-                  max="4"
-                  step="1"
-                  value={sliderPosition}
-                  onChange={(e) => setSliderPosition(Number(e.target.value))}
-                  className="w-full h-3 bg-slate-200 rounded-full appearance-none cursor-pointer
-                    [&::-webkit-slider-thumb]:appearance-none
-                    [&::-webkit-slider-thumb]:w-6
-                    [&::-webkit-slider-thumb]:h-6
-                    [&::-webkit-slider-thumb]:rounded-full
-                    [&::-webkit-slider-thumb]:bg-gradient-to-r
-                    [&::-webkit-slider-thumb]:from-[#264E36]
-                    [&::-webkit-slider-thumb]:to-[#607D3B]
-                    [&::-webkit-slider-thumb]:shadow-lg
-                    [&::-webkit-slider-thumb]:cursor-pointer
-                    [&::-webkit-slider-thumb]:transition-transform
-                    [&::-webkit-slider-thumb]:hover:scale-110
-                    [&::-moz-range-thumb]:w-6
-                    [&::-moz-range-thumb]:h-6
-                    [&::-moz-range-thumb]:rounded-full
-                    [&::-moz-range-thumb]:bg-gradient-to-r
-                    [&::-moz-range-thumb]:from-[#264E36]
-                    [&::-moz-range-thumb]:to-[#607D3B]
-                    [&::-moz-range-thumb]:border-0
-                    [&::-moz-range-thumb]:shadow-lg
-                    [&::-moz-range-thumb]:cursor-pointer"
-                />
-                <div className="flex justify-between text-xs text-slate-400 font-['Manrope'] mt-2">
-                  <span>1</span>
-                  <span>20</span>
-                  <span>50</span>
-                  <span>100</span>
-                  <span>100+</span>
-                </div>
-              </div>
-              <div className="mt-3 text-center">
-                <span className="text-3xl font-bold font-['Bebas_Neue'] text-[#264E36]">
-                  {transactionVolume > 100 ? "100+" : transactionVolume}
-                </span>
-                <span className="text-slate-500 font-['Manrope'] ml-2">
-                  transactions/month
-                </span>
-              </div>
-            </div>
-
-            {/* Agent Count */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 font-['Manrope'] mb-2">
-                <Users className="w-4 h-4 inline mr-2 text-[#607D3B]" />
-                Number of Agents
-              </label>
-              <input
-                type="number"
-                value={agentCount}
-                onChange={(e) => setAgentCount(e.target.value)}
-                placeholder="e.g., 25"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 font-['Manrope'] text-slate-700
-                  focus:outline-none focus:ring-2 focus:ring-[#607D3B]/50 focus:border-[#607D3B]
-                  transition-all duration-200"
-              />
-              <p className="text-xs text-slate-400 font-['Manrope'] mt-1 italic">
-                We don't charge per seat — only per transaction
-              </p>
-            </div>
-
-            {/* Brokerage Name */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 font-['Manrope'] mb-2">
-                <Building2 className="w-4 h-4 inline mr-2 text-[#607D3B]" />
-                Brokerage Name
-              </label>
-              <input
-                type="text"
-                value={brokerageName}
-                onChange={(e) => setBrokerageName(e.target.value)}
-                placeholder="Your Brokerage"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 font-['Manrope'] text-slate-700
-                  focus:outline-none focus:ring-2 focus:ring-[#607D3B]/50 focus:border-[#607D3B]
-                  transition-all duration-200"
-              />
-            </div>
-
-            {/* Contact Name */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 font-['Manrope'] mb-2">
-                <User className="w-4 h-4 inline mr-2 text-[#607D3B]" />
-                Contact Name
-              </label>
-              <input
-                type="text"
-                value={contactName}
-                onChange={(e) => setContactName(e.target.value)}
-                placeholder="Your Name"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 font-['Manrope'] text-slate-700
-                  focus:outline-none focus:ring-2 focus:ring-[#607D3B]/50 focus:border-[#607D3B]
-                  transition-all duration-200"
-              />
-            </div>
-
-            {/* Email */}
-            <div className="mb-6">
-              <label className="block text-sm font-semibold text-slate-700 font-['Manrope'] mb-2">
-                <Mail className="w-4 h-4 inline mr-2 text-[#607D3B]" />
-                Email
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@brokerage.com"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 font-['Manrope'] text-slate-700
-                  focus:outline-none focus:ring-2 focus:ring-[#607D3B]/50 focus:border-[#607D3B]
-                  transition-all duration-200"
-              />
-            </div>
-
-            {/* City, State */}
-            <div className="mb-8">
-              <label className="block text-sm font-semibold text-slate-700 font-['Manrope'] mb-2">
-                <MapPin className="w-4 h-4 inline mr-2 text-[#607D3B]" />
-                City, State
-              </label>
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="e.g., Coeur d'Alene, ID"
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 font-['Manrope'] text-slate-700
-                  focus:outline-none focus:ring-2 focus:ring-[#607D3B]/50 focus:border-[#607D3B]
-                  transition-all duration-200"
-              />
-            </div>
-          </motion.div>
-
-          {/* Right: Dynamic Pricing Display */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={prefersReduced ? { duration: 0 } : { duration: 0.6 }}
             className="flex flex-col"
           >
             {/* Pricing Card */}
-            <div className="bg-gradient-to-br from-[#264E36] via-[#37574a] to-[#607D3B] rounded-3xl p-8 text-white shadow-2xl flex-grow">
+            <div className="bg-gradient-to-br from-[#264E36] via-[#37574a] to-[#607D3B] rounded-2xl p-8 text-white shadow-2xl">
               <AnimatePresence mode="wait">
                 {isCustomPricing ? (
                   <motion.div
                     key="custom"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
+                    initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+                    animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+                    exit={prefersReduced ? undefined : { opacity: 0, y: -20 }}
+                    transition={prefersReduced ? { duration: 0 } : { duration: 0.3 }}
                     className="h-full flex flex-col"
                   >
                     <h3 className="text-3xl font-semibold font-['Bebas_Neue'] mb-4">
@@ -249,10 +218,10 @@ export function EnterprisePricingSection() {
                         Custom Pricing
                       </span>
                       <p className="text-white/70 font-['Manrope'] mt-2">
-                        Let's build a plan that works for you
+                        Let&apos;s build a plan that works for you
                       </p>
                     </div>
-                    <ul className="space-y-3 mb-8 flex-grow">
+                    <ul className="space-y-3 mb-6">
                       <li className="flex items-center gap-3 text-white/90 font-['Manrope']">
                         <span className="text-[#9DBFBF]">✓</span>
                         Volume discounts available
@@ -270,14 +239,31 @@ export function EnterprisePricingSection() {
                         Priority support
                       </li>
                     </ul>
+
+                    {/* Start Free CTA — inside custom tier */}
+                    <div className="pt-5 border-t border-white/[0.15]">
+                      <a href={`${APP_URL}/authentication/signup`} className="block">
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.10] hover:bg-white/[0.16] transition-all duration-300 group cursor-pointer">
+                          <div>
+                            <p className="text-sm font-semibold font-['Manrope'] text-white">
+                              Start free — 2 transactions on us
+                            </p>
+                            <p className="text-xs text-white/60 font-['Manrope'] mt-0.5">
+                              Upload MLS forms, state regs, and company policies to start training
+                            </p>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 ml-4" />
+                        </div>
+                      </a>
+                    </div>
                   </motion.div>
                 ) : (
                   <motion.div
                     key={currentTier?.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
+                    initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+                    animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+                    exit={prefersReduced ? undefined : { opacity: 0, y: -20 }}
+                    transition={prefersReduced ? { duration: 0 } : { duration: 0.3 }}
                     className="h-full flex flex-col"
                   >
                     <div className="flex items-center justify-between mb-4">
@@ -292,8 +278,8 @@ export function EnterprisePricingSection() {
                     <div className="text-center my-8">
                       <motion.span
                         key={currentTier?.monthlyTotal}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
+                        initial={prefersReduced ? undefined : { scale: 0.8, opacity: 0 }}
+                        animate={prefersReduced ? undefined : { scale: 1, opacity: 1 }}
                         className="text-6xl font-bold font-['Bebas_Neue']"
                       >
                         ${currentTier?.monthlyTotal.toLocaleString()}
@@ -304,7 +290,7 @@ export function EnterprisePricingSection() {
                       </p>
                     </div>
 
-                    <ul className="space-y-3 mb-8 flex-grow">
+                    <ul className="space-y-3 mb-6">
                       <li className="flex items-center gap-3 text-white/90 font-['Manrope']">
                         <span className="text-[#9DBFBF]">✓</span>
                         {currentTier?.maxDeals} transactions included
@@ -326,73 +312,155 @@ export function EnterprisePricingSection() {
                         Unlimited agents (no per-seat fee)
                       </li>
                     </ul>
+
+                    {/* Start Free CTA — inside standard tier */}
+                    <div className="pt-5 border-t border-white/[0.15]">
+                      <a href={`${APP_URL}/authentication/signup`} className="block">
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.10] hover:bg-white/[0.16] transition-all duration-300 group cursor-pointer">
+                          <div>
+                            <p className="text-sm font-semibold font-['Manrope'] text-white">
+                              Start free — 2 transactions on us
+                            </p>
+                            <p className="text-xs text-white/60 font-['Manrope'] mt-0.5">
+                              Upload MLS forms, state regs, and company policies to start training
+                            </p>
+                          </div>
+                          <ArrowRight className="w-5 h-5 text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300 flex-shrink-0 ml-4" />
+                        </div>
+                      </a>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
+            </div>
+          </motion.div>
 
-              {/* CTA Button */}
-              <a href={`${APP_URL}/authentication/signup`} className="block mt-auto">
-                <Button
-                  variant="ghost"
-                  size="lg"
-                  className="w-full rounded-xl py-6 text-base font-semibold font-['Manrope']
-                    bg-white text-[#264E36] hover:bg-slate-100
-                    transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-                >
-                  <motion.span
-                    className="flex items-center justify-center gap-2"
-                    whileHover={{ x: 2 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                  >
-                    {isCustomPricing ? "Contact Us" : "Get Started"}
-                    <motion.span
-                      animate={{ x: [0, 4, 0] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    >
-                      →
-                    </motion.span>
-                  </motion.span>
-                </Button>
-              </a>
+          {/* Right: Quote Form + Team Note */}
+          <motion.div
+            initial={prefersReduced ? undefined : { opacity: 0, x: 30 }}
+            whileInView={prefersReduced ? undefined : { opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={prefersReduced ? { duration: 0 } : { duration: 0.6, delay: 0.2 }}
+            className="bg-white/[0.03] backdrop-blur-md rounded-2xl p-8 border border-white/[0.08]"
+          >
+            {/* Team members callout */}
+            <div className="flex items-start gap-3 p-4 rounded-xl bg-[#264E36]/15 border border-[#264E36]/20 mb-8">
+              <Users className="w-5 h-5 text-[#9DBFBF] flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-semibold text-white font-['Manrope']">
+                  Add your whole team at no extra cost
+                </p>
+                <p className="text-xs text-slate-400 font-['Manrope'] mt-0.5">
+                  Agents, assistants, TCs, and admins — unlimited seats. You only pay per transaction.
+                </p>
+              </div>
             </div>
 
-            {/* Pricing Tiers Quick Reference */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.4, duration: 0.6 }}
-              className="mt-6 grid grid-cols-3 gap-4"
-            >
-              {pricingTiers.map((tier) => (
-                <div
-                  key={tier.label}
-                  className={`p-4 rounded-xl text-center transition-all duration-300 cursor-pointer
-                    ${currentTier?.label === tier.label && !isCustomPricing
-                      ? "bg-[#264E36] text-white shadow-lg"
-                      : "bg-white border border-slate-200 text-slate-600 hover:border-[#9DBFBF]"
-                    }`}
-                  onClick={() => setSliderPosition(sliderValues.indexOf(tier.maxDeals))}
-                >
-                  <p className="text-xs font-['Manrope'] opacity-70">Up to</p>
-                  <p className="text-xl font-bold font-['Bebas_Neue']">{tier.maxDeals}</p>
-                  <p className="text-xs font-['Manrope']">deals/mo</p>
+            <h3 className="text-2xl font-semibold font-['Bebas_Neue'] text-white mb-2 flex items-center gap-3">
+              <Calculator className="w-6 h-6 text-[#9DBFBF]" />
+              Get Your Custom Quote
+            </h3>
+            <p className="text-sm text-slate-500 font-['Manrope'] mb-8">
+              Tell us about your brokerage and we&apos;ll have a custom quote to you within 24 hours. Start with 2 free transactions.
+            </p>
+
+            {/* Brokerage Name */}
+            <div className="mb-5">
+              <label className="block text-sm font-semibold text-slate-300 font-['Manrope'] mb-2">
+                <Building2 className="w-4 h-4 inline mr-2 text-[#9DBFBF]" />
+                Brokerage Name
+              </label>
+              <input
+                type="text"
+                value={brokerageName}
+                onChange={(e) => setBrokerageName(e.target.value)}
+                placeholder="Your Brokerage"
+                className={inputClasses}
+              />
+            </div>
+
+            {/* Contact Name */}
+            <div className="mb-5">
+              <label className="block text-sm font-semibold text-slate-300 font-['Manrope'] mb-2">
+                <User className="w-4 h-4 inline mr-2 text-[#9DBFBF]" />
+                Your Name
+              </label>
+              <input
+                type="text"
+                value={contactName}
+                onChange={(e) => setContactName(e.target.value)}
+                placeholder="Full Name"
+                className={inputClasses}
+              />
+            </div>
+
+            {/* Email */}
+            <div className="mb-8">
+              <label className="block text-sm font-semibold text-slate-300 font-['Manrope'] mb-2">
+                <Mail className="w-4 h-4 inline mr-2 text-[#9DBFBF]" />
+                Email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@brokerage.com"
+                className={inputClasses}
+              />
+            </div>
+
+            {/* Submit Button */}
+            {submitState === "success" ? (
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-[#264E36]/20 border border-[#264E36]/30">
+                <CheckCircle className="w-5 h-5 text-[#9DBFBF] flex-shrink-0" />
+                <p className="text-sm font-['Manrope'] text-[#9DBFBF]">
+                  Quote request sent! We&apos;ll be in touch within 24 hours.
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="relative">
+                  {/* Glow behind button */}
+                  <div className="absolute -inset-1 bg-gradient-to-r from-[#264E36] via-[#607D3B] to-[#9DBFBF] rounded-2xl opacity-30 blur-lg transition-opacity duration-300 group-hover:opacity-50" />
+                  <button
+                    type="button"
+                    disabled={!canSubmit}
+                    onClick={handleSubmit}
+                    className="relative w-full rounded-xl py-5 text-base font-semibold font-['Manrope'] inline-flex items-center justify-center gap-2
+                      bg-white text-[#264E36]
+                      hover:bg-slate-100 hover:-translate-y-0.5
+                      shadow-lg hover:shadow-xl
+                      transition-all duration-300 cursor-pointer
+                      disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:shadow-lg"
+                  >
+                    <Send className="w-4 h-4" />
+                    {submitState === "loading" ? "Sending..." : "Request Your Custom Quote"}
+                  </button>
                 </div>
-              ))}
-            </motion.div>
+                {submitState === "error" && (
+                  <div className="flex items-center gap-3 mt-3 p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                    <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                    <p className="text-sm font-['Manrope'] text-red-400">
+                      Something went wrong. Please email <a href="mailto:ct@contre.ai" className="underline">ct@contre.ai</a> directly.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
           </motion.div>
         </div>
 
         {/* Bottom Note */}
         <motion.p
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={prefersReduced ? undefined : { opacity: 0 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 0.6, duration: 0.6 }}
+          transition={prefersReduced ? { duration: 0 } : { delay: 0.6, duration: 0.6 }}
           className="text-center text-slate-500 font-['Manrope'] text-sm mt-12 max-w-2xl mx-auto"
         >
-          All brokerage plans include custom training on your forms, unlimited agent seats,
-          brokerage-wide dashboard, and priority support. No hidden fees.
+          All brokerage plans include custom training on your forms, unlimited team members
+          (agents, assistants, TCs, admins), brokerage-wide dashboard, and priority support.
+          No per-seat fees. No hidden fees.
         </motion.p>
       </div>
     </section>

@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { APP_URL } from "@/lib/config"
+import { useReducedMotion } from "@/hooks/use-reduced-motion"
 
 // Seeded random number generator for deterministic results
 function seededRandom(seed: number) {
@@ -242,6 +243,7 @@ export default function EnhancedBackgroundPaths({
   const [currentPattern] = useState(2) // Set to 2 for geometric pattern
   const patterns = ['neural', 'flow', 'geometric', 'spiral']
   const words = title.split(" ")
+  const prefersReduced = useReducedMotion();
 
   // Disabled auto-cycling - keeping geometric pattern static
   // useEffect(() => {
@@ -264,16 +266,20 @@ export default function EnhancedBackgroundPaths({
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Dynamic Background Patterns */}
-      <div className="absolute inset-0 text-slate-600 dark:text-slate-400">
-        <motion.div
-          key={currentPattern}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 2 }}
-        >
-          {renderPattern()}
-        </motion.div>
+      <div className="absolute inset-0 text-slate-600 dark:text-slate-400" aria-hidden="true">
+        {prefersReduced ? (
+          <div>{renderPattern()}</div>
+        ) : (
+          <motion.div
+            key={currentPattern}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 2 }}
+          >
+            {renderPattern()}
+          </motion.div>
+        )}
       </div>
 
       {/* Gradient Overlay */}
@@ -282,9 +288,9 @@ export default function EnhancedBackgroundPaths({
       {/* Main Content */}
       <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.5, ease: "easeOut" }}
+          initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+          animate={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 1.5, ease: "easeOut" }}
           className="max-w-5xl mx-auto"
         >
           {/* Main Title */}
@@ -295,9 +301,9 @@ export default function EnhancedBackgroundPaths({
                   {word.split("").map((letter, letterIndex) => (
                     <motion.span
                       key={`${wordIndex}-${letterIndex}`}
-                      initial={{ y: 100, opacity: 0, rotateX: -90 }}
-                      animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                      transition={{
+                      initial={prefersReduced ? undefined : { y: 100, opacity: 0, rotateX: -90 }}
+                      animate={prefersReduced ? undefined : { y: 0, opacity: 1, rotateX: 0 }}
+                      transition={prefersReduced ? { duration: 0 } : {
                         delay: wordIndex * 0.15 + letterIndex * 0.05,
                         type: "spring",
                         stiffness: 100,
@@ -309,7 +315,7 @@ export default function EnhancedBackgroundPaths({
                                           dark:from-white dark:via-slate-200 dark:to-slate-400
                                           hover:from-[#264E36] hover:via-[#607D3B] hover:to-[#9DBFBF] dark:hover:from-[#264E36] dark:hover:via-[#607D3B] dark:hover:to-[#9DBFBF]
                                           transition-all duration-700 cursor-default"
-                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileHover={prefersReduced ? undefined : { scale: 1.05, y: -2 }}
                     >
                       {letter}
                     </motion.span>
@@ -320,9 +326,9 @@ export default function EnhancedBackgroundPaths({
 
             {/* Subtitle */}
             <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 1 }}
+              initial={prefersReduced ? undefined : { opacity: 0 }}
+              animate={prefersReduced ? undefined : { opacity: 1 }}
+              transition={prefersReduced ? { duration: 0 } : { delay: 1, duration: 1 }}
               className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 font-light tracking-wide max-w-3xl mx-auto"
             >
               Even the best agents miss things in real estate paperwork. Contre doesn't.
@@ -330,9 +336,9 @@ export default function EnhancedBackgroundPaths({
 
             {/* Feature Bullets */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.2, duration: 1 }}
+              initial={prefersReduced ? undefined : { opacity: 0 }}
+              animate={prefersReduced ? undefined : { opacity: 1 }}
+              transition={prefersReduced ? { duration: 0 } : { delay: 1.2, duration: 1 }}
               className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-slate-600 dark:text-slate-400"
             >
               <span>Upload any contract</span>
@@ -345,9 +351,9 @@ export default function EnhancedBackgroundPaths({
 
           {/* CTA Buttons */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.5, duration: 0.8, type: "spring", stiffness: 100 }}
+            initial={prefersReduced ? undefined : { opacity: 0, scale: 0.8 }}
+            animate={prefersReduced ? undefined : { opacity: 1, scale: 1 }}
+            transition={prefersReduced ? { duration: 0 } : { delay: 1.5, duration: 0.8, type: "spring", stiffness: 100 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
             {/* Primary CTA */}
@@ -365,14 +371,15 @@ export default function EnhancedBackgroundPaths({
               >
                 <motion.span
                   className="flex items-center gap-3"
-                  whileHover={{ x: 2 }}
+                  whileHover={prefersReduced ? undefined : { x: 2 }}
                   transition={{ type: "spring", stiffness: 400, damping: 10 }}
                 >
                   <span>Let's Train Your Purchase Agreement Free</span>
                   <motion.span
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    animate={prefersReduced ? undefined : { x: [0, 4, 0] }}
+                    transition={prefersReduced ? { duration: 0 } : { duration: 2, repeat: Infinity, ease: "easeInOut" }}
                     className="text-xl"
+                    aria-hidden="true"
                   >
                     →
                   </motion.span>
@@ -399,9 +406,9 @@ export default function EnhancedBackgroundPaths({
 
           {/* Microcopy */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 2, duration: 1 }}
+            initial={prefersReduced ? undefined : { opacity: 0 }}
+            animate={prefersReduced ? undefined : { opacity: 1 }}
+            transition={prefersReduced ? { duration: 0 } : { delay: 2, duration: 1 }}
             className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 text-sm text-slate-600 dark:text-slate-400"
           >
             <span className="flex items-center gap-2">
@@ -422,24 +429,26 @@ export default function EnhancedBackgroundPaths({
 
       {/* Floating Elements */}
       <motion.div
+        aria-hidden="true"
         className="absolute top-1/4 left-1/4 w-4 h-4 bg-blue-500/20 rounded-full blur-sm"
-        animate={{
+        animate={prefersReduced ? undefined : {
           y: [0, -20, 0],
           x: [0, 10, 0],
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.7, 0.3]
         }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+        transition={prefersReduced ? { duration: 0 } : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
+        aria-hidden="true"
         className="absolute top-3/4 right-1/3 w-6 h-6 bg-purple-500/20 rounded-full blur-sm"
-        animate={{
+        animate={prefersReduced ? undefined : {
           y: [0, 15, 0],
           x: [0, -15, 0],
           scale: [1, 0.8, 1],
           opacity: [0.5, 0.8, 0.5]
         }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+        transition={prefersReduced ? { duration: 0 } : { duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
     </div>
   )

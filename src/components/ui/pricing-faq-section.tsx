@@ -6,14 +6,16 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { ChevronDown } from "lucide-react";
+import { AmbientGlow } from "@/components/ui/ambient-glow";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { motion } from "framer-motion";
 
 const items = [
   {
     id: "1",
     title: "What's included in the agent subscription?",
     content:
-      "Both Monthly and Annual subscriptions include unlimited contract analyses, AI-powered deadline extraction, one-page summaries for each contract, client chatbot access, and email support. Annual subscribers also get priority support, early access to new features, and custom report branding.",
+      "Both Monthly and Annual subscriptions include AI-powered deadline extraction, one-page summaries for each contract, client chatbot access, and email support. Monthly includes 1 transaction per month (additional at $27.99 each), while Annual includes 12 transactions per year (additional at $22.99 each). Annual subscribers also get priority support.",
   },
   {
     id: "2",
@@ -31,7 +33,7 @@ const items = [
     id: "4",
     title: "Is there a free trial?",
     content:
-      "We offer a free first contract analysis so you can see exactly how Contre works with your documents. No credit card required. For brokerages, we provide a complimentary demo with your actual forms to show the custom training process.",
+      "Every account starts with 2 free documents — no credit card required. Upload your real contracts and see exactly how Contre works before committing to a plan. For brokerages, we also provide a complimentary demo with your actual forms to show the custom training process.",
   },
   {
     id: "5",
@@ -65,6 +67,12 @@ const items = [
   },
   {
     id: "10",
+    title: "Do I pay per seat or per team member?",
+    content:
+      "No — we never charge per seat. You can add unlimited team members including agents, assistants, transaction coordinators, and admins at no extra cost. You only pay per transaction. Whether your brokerage has 5 agents or 500, the pricing stays the same.",
+  },
+  {
+    id: "11",
     title: "What payment methods do you accept?",
     content:
       "We accept all major credit cards for individual agents. Brokerages can pay by credit card, ACH bank transfer, or invoice (net-30 terms available for qualifying accounts).",
@@ -72,38 +80,50 @@ const items = [
 ];
 
 export function PricingFAQSection() {
+  const prefersReduced = useReducedMotion();
+
   return (
-    <section className="py-24 md:py-32 bg-white">
-      <div className="w-full max-w-4xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-7xl font-semibold font-['Bebas_Neue'] text-[#37474F] mb-6">
+    <section className="relative py-24 md:py-32 bg-gradient-to-b from-[#112A1E] via-[#0D1A14] to-[#112A1E] overflow-hidden">
+      {/* Top decorative line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#9DBFBF]/10 to-transparent" />
+      <AmbientGlow color="#9DBFBF" position="top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" opacity="opacity-[0.08]" size="w-[700px] h-[700px]" />
+      <AmbientGlow color="#264E36" position="top-[-100px] left-[-100px]" opacity="opacity-[0.10]" size="w-[400px] h-[400px]" />
+
+      <div className="relative z-10 w-full max-w-4xl mx-auto px-6">
+        <motion.div
+          className="text-center mb-16"
+          initial={prefersReduced ? undefined : { opacity: 0, y: 24 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 0.6 }}
+        >
+          <h2 className="text-5xl md:text-7xl font-semibold font-['Bebas_Neue'] text-white mb-6 tracking-wide">
             Pricing Questions
           </h2>
-          <p className="text-lg md:text-xl text-slate-600 font-['Manrope']">
+          <p className="text-lg md:text-xl text-slate-400 font-['Manrope']">
             Everything you need to know about our plans and billing
           </p>
-        </div>
+        </motion.div>
 
         <Accordion type="single" collapsible className="w-full">
           {items.map((item) => (
             <AccordionItem
               value={item.id}
               key={item.id}
-              className="border-slate-200 last:border-b"
+              className="border-white/[0.08] last:border-b hover:bg-white/[0.02] transition-colors duration-300"
             >
-              <AccordionTrigger className="text-left hover:no-underline group">
+              <AccordionTrigger className="text-left hover:no-underline group [&>svg]:text-[#9DBFBF] [&>svg]:h-5 [&>svg]:w-5 [&>svg]:group-hover:text-[#b3d0d0]">
                 <div className="flex items-center gap-4 w-full">
-                  <span className="text-sm font-semibold text-[#264E36] font-['Manrope'] min-w-[24px]">
+                  <span className="text-sm font-semibold text-[#9DBFBF] font-['Manrope'] min-w-[24px]">
                     {item.id.padStart(2, '0')}
                   </span>
-                  <h3 className="text-xl md:text-2xl font-semibold font-['Bebas_Neue'] text-[#37474F] group-hover:text-[#264E36] transition-colors flex-1">
+                  <h3 className="text-2xl md:text-3xl font-semibold font-['Bebas_Neue'] text-white group-hover:text-[#9DBFBF] transition-colors flex-1">
                     {item.title}
                   </h3>
-                  <ChevronDown className="h-5 w-5 shrink-0 text-[#264E36] transition-transform duration-200" />
                 </div>
               </AccordionTrigger>
 
-              <AccordionContent className="text-slate-600 font-['Manrope'] text-base md:text-lg leading-relaxed pl-12 pr-4 pb-6">
+              <AccordionContent className="text-slate-400 font-['Manrope'] text-base md:text-lg leading-relaxed pl-12 pr-4 pb-6">
                 {item.content}
               </AccordionContent>
             </AccordionItem>

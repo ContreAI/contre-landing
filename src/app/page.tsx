@@ -1,16 +1,17 @@
 import { Metadata } from 'next'
-import EnhancedBackgroundPaths from "@/components/ui/modern-background-paths"
+import { HeroSection } from "@/components/ui/hero-section"
 import { StatsBanner } from "@/components/ui/stats-banner"
 import { DocumentTable } from "@/components/ui/document-table"
 import { FridayNightSection } from "@/components/ui/friday-night-section"
 import { CTASectionAlt } from "@/components/ui/cta-section-alt"
 import { HowItWorks } from "@/components/ui/how-it-works"
 import { FeatureTabs } from "@/components/ui/feature-tabs"
-import { FeatureCards } from "@/components/ui/feature-cards"
-import { FeatureCardsAgents } from "@/components/ui/feature-cards-agents"
+import { FeatureCardsCombined } from "@/components/ui/feature-cards-combined"
+import { VideoDemo } from "@/components/ui/video-demo"
 import { FAQSection } from "@/components/ui/faq-section"
 import { CTAFinal } from "@/components/ui/cta-final"
 import Footer from "@/components/ui/footer"
+import { IntegrationPartners } from "@/components/ui/integration-partners"
 import { OrganizationSchema, WebsiteSchema, SoftwareApplicationSchema } from "@/components/seo/StructuredData"
 
 export const metadata: Metadata = {
@@ -36,22 +37,23 @@ export const metadata: Metadata = {
 
 export default function HomePage() {
   return (
-    <>
+    <main id="main-content">
       <OrganizationSchema />
       <WebsiteSchema />
       <SoftwareApplicationSchema />
-      <EnhancedBackgroundPaths title="Catch Every Detail. Track Every Deadline. 60 Seconds." />
+      <HeroSection />
+      <IntegrationPartners />
       <StatsBanner />
       <DocumentTable />
       <FridayNightSection />
       <HowItWorks />
+      <VideoDemo />
       <CTASectionAlt />
       <FeatureTabs />
-      <FeatureCards />
-      <FeatureCardsAgents />
+      <FeatureCardsCombined />
       <FAQSection />
       <CTAFinal />
       <Footer />
-    </>
+    </main>
   )
 }

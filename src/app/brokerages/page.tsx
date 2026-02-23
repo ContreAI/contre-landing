@@ -1,43 +1,39 @@
 import { Metadata } from 'next'
-import EnhancedBackgroundPathsBrokerages from "@/components/ui/modern-background-paths-brokerages"
-import { HowItWorksBrokerages } from "@/components/ui/how-it-works-brokerages"
+import { BrokerageHero } from "@/components/ui/brokerage-hero"
+import { BrokerageSteps } from "@/components/ui/brokerage-steps"
+import { BrokerageTransformation } from "@/components/ui/brokerage-transformation"
+import { BrokerageCTA } from "@/components/ui/brokerage-cta"
 import { FAQSection } from "@/components/ui/faq-section"
-import { StakesSectionBrokerages } from "@/components/ui/stakes-section-brokerages"
-import { SolutionSectionBrokerages } from "@/components/ui/solution-section-brokerages"
-import { EmpathySectionBrokerages } from "@/components/ui/empathy-section-brokerages"
-import { HowContreWorksBrokerages } from "@/components/ui/how-contre-works-brokerages"
-import { AssessmentCTABrokerages } from "@/components/ui/assessment-cta-brokerages"
 import Footer from "@/components/ui/footer"
 
 export const metadata: Metadata = {
-  title: 'For Brokerages - Enterprise Real Estate Document Protection',
-  description: 'Protect your business from costly oversights. Provide enterprise-level tools to every agent. Reduce E&O claims and liability exposure.',
+  title: 'For Brokerages - Complete Transaction Oversight with AI',
+  description: 'AI trained on YOUR forms, YOUR deadlines, YOUR standards. Complete oversight of every transaction across your entire team. Integrates with SkySlope & LoneWolf.',
   keywords: [
-    'real estate brokerage software',
-    'enterprise contract management',
-    'brokerage risk management',
-    'E&O protection',
-    'compliance tools',
-    'agent oversight',
+    'brokerage transaction management',
+    'real estate brokerage AI',
+    'agent oversight software',
+    'transaction compliance',
+    'E&O risk reduction',
+    'SkySlope integration',
+    'LoneWolf integration',
+    'brokerage document review',
   ],
   openGraph: {
-    title: 'Contre AI for Brokerages - Protect Every Transaction',
-    description: 'Enterprise-grade AI document protection for real estate brokerages.',
+    title: 'Contre AI for Brokerages - Every Transaction. Every Agent. Complete Oversight.',
+    description: 'AI trained on your standards. Zero agent friction. Complete brokerage oversight.',
   },
 }
 
 export default function BrokeragesPage() {
   return (
-    <>
-      <EnhancedBackgroundPathsBrokerages />
-      <StakesSectionBrokerages />
-      <SolutionSectionBrokerages />
-      <EmpathySectionBrokerages />
-      <HowItWorksBrokerages />
-      <HowContreWorksBrokerages />
-      <AssessmentCTABrokerages />
+    <main id="main-content">
+      <BrokerageHero />
+      <BrokerageSteps />
+      <BrokerageTransformation />
+      <BrokerageCTA />
       <FAQSection />
       <Footer />
-    </>
+    </main>
   )
 }

@@ -3,81 +3,72 @@
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { APP_URL } from "@/lib/config"
+import { AmbientGlow } from "@/components/ui/ambient-glow"
+import { useReducedMotion } from "@/hooks/use-reduced-motion"
 
 export function CTAFinal() {
+  const prefersReduced = useReducedMotion();
   return (
-    <section className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-br from-[#264E36] via-[#607D3B] to-[#9DBFBF]">
-      {/* Decorative gradient overlays */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-[#9DBFBF] rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#264E36] rounded-full blur-3xl" />
-      </div>
-
-      {/* Background pattern overlay */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff_1px,transparent_1px),linear-gradient(to_bottom,#ffffff_1px,transparent_1px)] bg-[size:40px_40px]" />
-      </div>
+    <section className="relative py-24 md:py-32 overflow-hidden bg-gradient-to-b from-[#112A1E] to-[#0D1A14]">
+      {/* Radial spotlight effect */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(157,191,191,0.08)_0%,_transparent_60%)]" />
+      {/* Top decorative line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#9DBFBF]/12 to-transparent" />
+      <AmbientGlow color="#264E36" position="top-[-100px] left-1/2 -translate-x-1/2" opacity="opacity-[0.18]" size="w-[800px] h-[800px]" />
+      <AmbientGlow color="#9DBFBF" position="bottom-[-200px] left-[-100px]" opacity="opacity-[0.14]" size="w-[600px] h-[600px]" />
 
       <div className="relative z-10 container mx-auto px-6 text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={prefersReduced ? undefined : { opacity: 0, y: 20 }}
+          whileInView={prefersReduced ? undefined : { opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={prefersReduced ? { duration: 0 } : { duration: 0.6 }}
           className="max-w-4xl mx-auto"
         >
-          {/* Headline */}
           <h2 className="text-5xl md:text-7xl font-semibold font-bebas text-white mb-6 tracking-wide">
             Every Detail. Every Deadline. 60 Seconds.
           </h2>
 
-          {/* Subheadline */}
-          <p className="text-lg md:text-xl text-white/90 font-manrope max-w-2xl mx-auto mb-10">
+          <p className="text-lg md:text-xl text-slate-400 font-manrope max-w-2xl mx-auto mb-10">
             Upload your first contract and see what Contre catches.
           </p>
 
-          {/* CTA Button */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={prefersReduced ? undefined : { opacity: 0, scale: 0.8 }}
+            whileInView={prefersReduced ? undefined : { opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.8, type: "spring", stiffness: 100 }}
-            className="inline-block group"
+            transition={prefersReduced ? { duration: 0 } : { delay: 0.3, duration: 0.8, type: "spring", stiffness: 100 }}
+            className="inline-block group relative"
           >
-            <div className="relative p-[2px] bg-white rounded-2xl group-hover:bg-white/90 transition-all duration-300">
-              <Button
-                variant="ghost"
-                size="lg"
-                className="relative rounded-[14px] px-12 py-6 text-lg font-semibold
-                            bg-gradient-to-r from-[#264E36] to-[#607D3B] hover:from-[#1a3624] hover:to-[#4a5f2d]
-                            text-white transition-all duration-300
-                            group-hover:-translate-y-1 group-hover:shadow-2xl
-                            border-0 backdrop-blur-sm font-manrope"
-                onClick={() => window.open(APP_URL, '_blank')}
+            <div className="absolute -inset-1.5 bg-white rounded-2xl opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
+            <Button
+              variant="ghost"
+              size="lg"
+              className="relative rounded-2xl px-12 py-6 text-lg font-semibold
+                          bg-white hover:bg-gray-100
+                          text-[#0D1A14] transition-all duration-200
+                          group-hover:-translate-y-1 shadow-soft-lg group-hover:shadow-[0_12px_48px_rgba(255,255,255,0.2)]
+                          border-0 font-manrope"
+              onClick={() => window.open(`${APP_URL}/authentication/signup`, '_blank')}
+            >
+              <motion.span
+                className="flex items-center gap-3"
+                whileHover={prefersReduced ? undefined : { x: 2 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
               >
+                <span className="relative">
+                  Get Started Free
+                </span>
                 <motion.span
-                  className="flex items-center gap-3"
-                  whileHover={{ x: 2 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  animate={prefersReduced ? undefined : { x: [0, 4, 0] }}
+                  transition={prefersReduced ? { duration: 0 } : { duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-xl"
+                  aria-hidden="true"
                 >
-                  <span className="relative">
-                    Get Started Free
-                    <motion.span
-                      className="absolute -bottom-1 left-0 w-0 h-0.5 bg-white group-hover:w-full transition-all duration-300"
-                      initial={{ width: 0 }}
-                      whileHover={{ width: "100%" }}
-                    />
-                  </span>
-                  <motion.span
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="text-xl"
-                  >
-                    →
-                  </motion.span>
+                  →
                 </motion.span>
-              </Button>
-            </div>
+              </motion.span>
+            </Button>
           </motion.div>
         </motion.div>
       </div>
